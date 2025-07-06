@@ -1,22 +1,22 @@
-# Welcome to your Lovable project
+# Welcome to your KL project
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925
+**URL**: https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use KL**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and start prompting.
+Simply visit the [KL Project](https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and start prompting.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made via KL will be committed automatically to this repo.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in KL.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -62,12 +62,12 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and click on Share -> Publish.
+Simply open [KL](https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain to my KL project?
 
 Yes, you can!
 
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Read more here: [Setting up a custom domain](https://docs.KL.dev/tips-tricks/custom-domain#step-by-step-guide)
