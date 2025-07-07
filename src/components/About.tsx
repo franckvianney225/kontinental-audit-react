@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Award, MapPin, TrendingUp, Users, Target, Clock, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
 
 const About = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
   const [animatedStats, setAnimatedStats] = useState([]);
 
   useEffect(() => {
@@ -195,7 +197,13 @@ const About = () => {
             <p className="text-xl mb-8 text-white/90">
               Contactez-nous dès aujourd'hui pour discuter de vos besoins en audit et formation
             </p>
-            <Link to="/contact" className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-all duration-300 inline-flex items-center space-x-2 hover:transform hover:scale-105 hover:shadow-lg relative z-10">
+            <Link
+              to="/contact"
+              className="bg-white text-blue-600 px-8 py-4 rounded-full font-semibold hover:bg-blue-50 transition-all duration-300 inline-flex items-center space-x-2 hover:transform hover:scale-105 hover:shadow-lg relative z-10"
+              onClick={() => {
+                window.scrollTo(0, 0);
+              }}
+            >
               <span>Nous Contacter</span>
               <ArrowRight className="w-5 h-5" />
             </Link>
