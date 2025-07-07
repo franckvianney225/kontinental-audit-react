@@ -7,9 +7,10 @@ import { ConsultingTestimonials } from '../components/ConsultingTestimonials';
 import Hero from '../components/Hero';
 import Intro from '../components/Intro';
 import About from '../components/About';
-import Contact from '../components/Contact';
+// import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import TeamSection from '../components/TeamSection';
+import ReferencesSection from '@/components/ReferencesSection';
 
 const Index = () => {
   return (
@@ -23,7 +24,7 @@ const Index = () => {
       <About />
       <TeamSection />
       <GallerySection />
-      {/* <Contact /> */}
+      <ReferencesSection />
       <Footer />
     </div>
   );
