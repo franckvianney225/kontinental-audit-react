@@ -29,8 +29,12 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/" className="text-2xl font-bold text-[#0B1C39] hover:text-[#D4AF37] transition-colors">
-              KL
+            <a href="/" className="flex items-center">
+              <img
+                src="/images/logo/logo.jpeg"
+                alt="Logo Kontinental"
+                className="h-10 w-auto"
+              />
             </a>
           </div>
 
