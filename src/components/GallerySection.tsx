@@ -3,41 +3,66 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Autoplay from 'embla-carousel-autoplay';
 
 const images = [
-  { 
-    url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format',
-    shape: 'rectangle',
-    legend: 'Audit comptable'
-  },
+  // {
+  //   url: '/images/herosection/hero1.png',
+  //   shape: 'rectangle',
+  //   legend: 'Audit comptable'
+  // },
   {
-    url: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&auto=format', 
+    url: '/images/herosection/hero2.png',
     shape: 'triangle',
     legend: 'Analyse financière'
   },
   {
-    url: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&auto=format',
-    shape: 'rectangle', 
+    url: '/images/herosection/hero3.png',
+    shape: 'rectangle',
     legend: 'Audit organisationnel'
   },
   {
-    url: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?w=800&auto=format',
+    url: '/images/herosection/hero5.jpg',
     shape: 'triangle',
-    legend: 'Ressources humaines' 
+    legend: 'Ressources humaines'
   },
   {
-    url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800&auto=format',
+    url: '/images/herosection/hero6.jpg',
     shape: 'rectangle',
     legend: 'Système d\'information'
   },
   {
-    url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&auto=format',
+    url: '/images/herosection/hero7.jpg',
     shape: 'triangle',
     legend: 'Formation professionnelle'
   },
   {
-    url: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&auto=format',
+    url: '/images/herosection/hero8.jpg',
     shape: 'rectangle',
     legend: 'Conseil juridique'
-  }
+  },
+  {
+    url: '/images/herosection/hero9.jpg',
+    shape: 'triangle',
+    legend: 'Gestion de projet'
+  },
+  {
+    url: '/images/herosection/hero10.jpg',
+    shape: 'rectangle',
+    legend: 'Stratégie d\'entreprise'
+  },
+  {
+    url: '/images/herosection/hero11.jpg',
+    shape: 'triangle',
+    legend: 'Optimisation fiscale'
+  },
+  {
+    url: '/images/herosection/hero12.jpg',
+    shape: 'rectangle',
+    legend: 'Contrôle interne'
+  },
+  // {
+  //   url: '/images/herosection/hero13.jpg',
+  //   shape: 'triangle',
+  //   legend: 'Due diligence'
+  // }
 ];
 
 const autoplayOptions = {
