@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { supabase } from '../lib/supabaseClient'
+import { useState, useEffect } from 'react'
+import { supabase, supabaseAdmin } from '../lib/supabaseClient'
 import MissionForm from '../components/MissionForm'
 import UserForm from '../components/UserForm'
 import { 
@@ -28,16 +28,7 @@ export type Mission = {
   etiquette: string
 }
 
-export type User = {
-  id: string
-  name: string
-  email: string
-  role: string
-  phone?: string
-  company?: string
-  status: 'Actif' | 'Inactif'
-  joinDate: string
-}
+import { User, UserMetadata } from '../types/user'
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -60,28 +51,33 @@ export default function AdminPage() {
     }
   ])
   
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: '1',
-      name: 'Jean Dupont',
-      email: 'jean.dupont@example.com',
-      role: 'Administrateur',
-      phone: '0123456789',
-      company: 'Tech Corp',
-      status: 'Actif',
-      joinDate: '2024-01-15'
-    },
-    {
-      id: '2',
-      name: 'Marie Martin',
-      email: 'marie.martin@example.com',
-      role: 'Utilisateur',
-      phone: '0987654321',
-      company: 'StartUp Inc',
-      status: 'Actif',
-      joinDate: '2024-02-20'
+  const [users, setUsers] = useState<User[]>([])
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers({
+        page: 1,
+        perPage: 1000
+      })
+      if (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error)
+        return
+      }
+      setUsers(users.map(u => ({
+        id: u.id,
+        email: u.email || '',
+        user_metadata: {
+          name: u.user_metadata?.name || '',
+          role: u.user_metadata?.role || 'Utilisateur',
+          phone: u.user_metadata?.phone,
+          company: u.user_metadata?.company
+        },
+        created_at: u.created_at || new Date().toISOString()
+      })))
     }
-  ])
+
+    fetchUsers()
+  }, [])
 
   const [showMissionForm, setShowMissionForm] = useState(false)
   const [showUserForm, setShowUserForm] = useState(false)
@@ -96,20 +92,21 @@ export default function AdminPage() {
     etiquette: ''
   })
   const [newUser, setNewUser] = useState<Omit<User, 'id'>>({
-    name: '',
     email: '',
-    role: 'Utilisateur',
-    phone: '',
-    company: '',
-    status: 'Actif',
-    joinDate: new Date().toISOString().split('T')[0]
+    user_metadata: {
+      name: '',
+      role: 'Utilisateur',
+      phone: '',
+      company: ''
+    },
+    created_at: new Date().toISOString()
   })
 
   // Statistiques du tableau de bord
   const stats = {
     totalMissions: missions.length,
     totalUsers: users.length,
-    usersActifs: users.filter(u => u.status === 'Actif').length
+    usersActifs: users.length // Tous les utilisateurs sont actifs dans Supabase
   }
 
   // Fonction pour obtenir la couleur du statut (utilisée uniquement pour les utilisateurs)
@@ -178,11 +175,11 @@ export default function AdminPage() {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Administrateurs</span>
-              <span className="text-sm font-bold text-blue-600">{users.filter(u => u.role === 'Administrateur').length}</span>
+              <span className="text-sm font-bold text-blue-600">{users.filter(u => u.user_metadata?.role === 'Administrateur').length}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Utilisateurs</span>
-              <span className="text-sm font-bold text-green-600">{users.filter(u => u.role === 'Utilisateur').length}</span>
+              <span className="text-sm font-bold text-green-600">{users.filter(u => u.user_metadata?.role === 'Utilisateur').length}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Total actifs</span>
@@ -370,12 +367,12 @@ export default function AdminPage() {
                     <div className="flex items-center">
                       <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                         <span className="text-white font-medium text-sm">
-                          {user.name.charAt(0)}
+                          {user.user_metadata?.name?.charAt(0) || '?'}
                         </span>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-500">Inscrit le {new Date(user.joinDate).toLocaleDateString('fr-FR')}</div>
+                        <div className="text-sm font-medium text-gray-900">{user.user_metadata.name}</div>
+                        <div className="text-sm text-gray-500">Inscrit le {new Date(user.created_at).toLocaleDateString('fr-FR')}</div>
                       </div>
                     </div>
                   </td>
@@ -385,10 +382,10 @@ export default function AdminPage() {
                         <Mail className="h-4 w-4 text-gray-400 mr-2" />
                         <span className="text-sm text-gray-900">{user.email}</span>
                       </div>
-                      {user.phone && (
+                      {user.user_metadata?.phone && (
                         <div className="flex items-center">
                           <Phone className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-sm text-gray-900">{user.phone}</span>
+                          <span className="text-sm text-gray-900">{user.user_metadata.phone}</span>
                         </div>
                       )}
                     </div>
@@ -396,18 +393,18 @@ export default function AdminPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Shield className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{user.role}</span>
+                      <span className="text-sm text-gray-900">{user.user_metadata.role}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Building className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{user.company || 'Non spécifié'}</span>
+                      <span className="text-sm text-gray-900">{user.user_metadata.company || 'Non spécifié'}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(user.status)}`}>
-                      {user.status}
+                    <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                      Actif
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -422,6 +419,7 @@ export default function AdminPage() {
                     </button>
                     <button 
                       onClick={() => {
+                        supabaseAdmin.auth.admin.deleteUser(user.id)
                         setUsers(users.filter(u => u.id !== user.id))
                       }}
                       className="text-red-600 hover:text-red-900"
@@ -455,13 +453,29 @@ export default function AdminPage() {
         )}
         {showUserForm && (
           <UserForm
-            editingUser={editingUser}
-            newUser={newUser}
-            users={users}
-            setEditingUser={setEditingUser}
-            setNewUser={setNewUser}
-            setUsers={setUsers}
-            setShowUserForm={setShowUserForm}
+            onSuccess={() => {
+              setShowUserForm(false)
+              setEditingUser(null)
+              // Rafraîchir la liste des utilisateurs
+              supabaseAdmin.auth.admin.listUsers()
+                .then(({ data: { users } }) => {
+                  setUsers(users.map(u => ({
+                    id: u.id,
+                    email: u.email || '',
+                    user_metadata: {
+                      name: u.user_metadata?.name || '',
+                      role: u.user_metadata?.role || 'Utilisateur',
+                      phone: u.user_metadata?.phone,
+                      company: u.user_metadata?.company
+                    },
+                    created_at: u.created_at || new Date().toISOString()
+                  })))
+                })
+            }}
+            onCancel={() => {
+              setShowUserForm(false)
+              setEditingUser(null)
+            }}
           />
         )}
         {/* Sidebar moderne */}

@@ -1,125 +1,119 @@
-import { User } from '../pages/AdminPage'
+import { useState } from 'react'
+import { supabaseAdmin } from '../lib/supabaseClient'
 
 type UserFormProps = {
-  editingUser: User | null
-  newUser: Omit<User, 'id'>
-  users: User[]
-  setEditingUser: (user: User | null) => void
-  setNewUser: (user: Omit<User, 'id'>) => void
-  setUsers: (users: User[]) => void
-  setShowUserForm: (show: boolean) => void
+  onSuccess: () => void
+  onCancel: () => void
 }
 
-export default function UserForm({
-  editingUser,
-  newUser,
-  users,
-  setEditingUser,
-  setNewUser,
-  setUsers,
-  setShowUserForm
-}: UserFormProps) {
+export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [name, setName] = useState('')
+  const [role, setRole] = useState('Utilisateur')
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+
+    try {
+      const { data, error } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: {
+          name,
+          role
+        }
+      })
+
+      if (error) throw error
+      onSuccess()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 w-full max-w-2xl">
-        <h2 className="text-2xl font-bold mb-6">
-          {editingUser ? 'Modifier utilisateur' : 'Nouvel utilisateur'}
-        </h2>
-        <div className="space-y-6">
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">Nom</label>
-            <input
-              type="text"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-              value={editingUser ? editingUser.name : newUser.name}
-              onChange={(e) => editingUser
-                ? setEditingUser({...editingUser, name: e.target.value})
-                : setNewUser({...newUser, name: e.target.value})
-              }
-            />
+      <div className="bg-white rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6">Nouvel utilisateur</h2>
+        
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
           </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">Email</label>
+            <label className="block mb-2 font-medium">Email*</label>
             <input
               type="email"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-              value={editingUser ? editingUser.email : newUser.email}
-              onChange={(e) => editingUser
-                ? setEditingUser({...editingUser, email: e.target.value})
-                : setNewUser({...newUser, email: e.target.value})
-              }
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
             />
           </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Rôle</label>
-              <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={editingUser ? editingUser.role : newUser.role}
-                onChange={(e) => editingUser
-                  ? setEditingUser({...editingUser, role: e.target.value})
-                  : setNewUser({...newUser, role: e.target.value})
-                }
-              >
-                <option value="Administrateur">Administrateur</option>
-                <option value="Utilisateur">Utilisateur</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-lg font-medium text-gray-700 mb-2">Statut</label>
-              <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={editingUser ? editingUser.status : newUser.status}
-                onChange={(e) => editingUser
-                  ? setEditingUser({...editingUser, status: e.target.value as User['status']})
-                  : setNewUser({...newUser, status: e.target.value as User['status']})
-                }
-              >
-                <option value="Actif">Actif</option>
-                <option value="Inactif">Inactif</option>
-              </select>
-            </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Mot de passe*</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-2 border rounded"
+              required
+              minLength={6}
+            />
           </div>
-          <div className="flex justify-end space-x-4 pt-6">
+
+          <div>
+            <label className="block mb-2 font-medium">Nom complet</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block mb-2 font-medium">Rôle</label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              <option value="Utilisateur">Utilisateur</option>
+              <option value="Administrateur">Administrateur</option>
+            </select>
+          </div>
+
+          <div className="flex justify-end gap-4 pt-4">
             <button
-              onClick={() => {
-                setShowUserForm(false)
-                setEditingUser(null)
-              }}
-              className="px-6 py-3 border border-gray-300 rounded-lg text-lg"
+              type="button"
+              onClick={onCancel}
+              className="px-4 py-2 border rounded"
+              disabled={isLoading}
             >
               Annuler
             </button>
             <button
-              onClick={() => {
-                if (editingUser) {
-                  setUsers(users.map(u =>
-                    u.id === editingUser.id ? editingUser : u
-                  ))
-                } else {
-                  setUsers([...users, {
-                    ...newUser,
-                    id: Date.now().toString()
-                  }])
-                  setNewUser({
-                    name: '',
-                    email: '',
-                    role: 'Utilisateur',
-                    phone: '',
-                    company: '',
-                    status: 'Actif',
-                    joinDate: new Date().toISOString().split('T')[0]
-                  })
-                }
-                setShowUserForm(false)
-                setEditingUser(null)
-              }}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg text-lg"
+              type="submit"
+              className="px-4 py-2 bg-blue-600 text-white rounded"
+              disabled={isLoading}
             >
-              {editingUser ? 'Modifier' : 'Créer'}
+              {isLoading ? 'Création...' : 'Créer'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   )
