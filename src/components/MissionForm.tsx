@@ -27,29 +27,17 @@ export default function MissionForm({
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase
-        .from('categories')
-        .select('id,titre,description')
+        .from('category')
+        .select('id, titre, description')
         .order('titre', { ascending: true })
-      
+
       if (error) {
-        console.error('Error fetching categories:', error)
+        console.error('Erreur chargement catégories :', error)
       } else {
         setCategories(data)
       }
     }
 
-    fetchCategories()
-  }, [])
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const { data, error } = await supabase
-        .from('categories')
-        .select('id, name')
-        .order('name')
-      
-      if (data) setCategories(data)
-    }
     fetchCategories()
   }, [])
 

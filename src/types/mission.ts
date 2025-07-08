@@ -9,3 +9,12 @@ export type Mission = {
   created_at?: string
   updated_at?: string
 }
+
+export type Category = {
+  id: number
+  name: string
+  titre?: string
+  description?: string
+  created_at?: string
+  updated_at?: string
+}
