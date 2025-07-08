@@ -49,7 +49,7 @@ const Header = () => {
             <a href="#services" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
               SERVICES
             </a>
-            <a href="nos-atouts" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            <a href="/nos-atouts" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
               NOS ATOUTS
             </a>
             <a href="#contact" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
@@ -98,11 +98,14 @@ const Header = () => {
               <a href="/" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Accueil
               </a>
-              <a href="#about" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+              <a href="/a-propos" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 À propos
               </a>
               <a href="#services" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Services
+              </a>
+              <a href="/nos-atouts" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+                Nos Atouts
               </a>
               <a href="#contact" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Contact
