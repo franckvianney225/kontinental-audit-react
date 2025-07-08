@@ -1,28 +1,28 @@
 import { useState } from 'react'
-import { Mission } from '../pages/AdminPage'
+import { supabase, supabaseAdmin } from '../lib/supabaseClient'
+import type { Mission } from '../types/mission'
 
 type MissionFormProps = {
-  editingMission: Mission | null
-  newMission: Omit<Mission, 'id'>
-  missions: Mission[]
-  setEditingMission: (mission: Mission | null) => void
-  setNewMission: (mission: Omit<Mission, 'id'>) => void
-  setMissions: (missions: Mission[]) => void
-  setShowMissionForm: (show: boolean) => void
+  mission?: Mission
+  onClose: () => void
+  onMissionSaved: (mission: Mission) => void
 }
 
 export default function MissionForm({
-  editingMission,
-  newMission,
-  missions,
-  setEditingMission,
-  setNewMission,
-  setMissions,
-  setShowMissionForm
+  mission,
+  onClose,
+  onMissionSaved
 }: MissionFormProps) {
-  const [viewMode, setViewMode] = useState(!!editingMission)
+  const [viewMode, setViewMode] = useState(!!mission)
+  const [formData, setFormData] = useState<Omit<Mission, 'id'>>(mission || {
+    name: '',
+    Client: '',
+    mission_date: new Date().toISOString().split('T')[0],
+    Lieu: '',
+    Étiquette: ''
+  })
 
-  if (viewMode && !editingMission) {
+  if (viewMode && !mission) {
     return null
   }
 
@@ -30,7 +30,7 @@ export default function MissionForm({
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6">
-          {viewMode ? 'Détails mission' : editingMission ? 'Modifier mission' : 'Nouvelle mission'}
+          {viewMode ? 'Détails mission' : mission ? 'Modifier mission' : 'Nouvelle mission'}
         </h2>
 
         {viewMode ? (
@@ -38,37 +38,37 @@ export default function MissionForm({
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-lg font-medium text-gray-500">ID</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.id}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.id}</p>
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-500">Mission</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.nom}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.name}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-lg font-medium text-gray-500">Client</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.client}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.Client}</p>
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-500">Date</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.date}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.mission_date}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-lg font-medium text-gray-500">Lieu</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.lieu}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.Lieu}</p>
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-500">Étiquette</p>
-                <p className="text-xl text-gray-900 mt-1">{editingMission?.etiquette}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.Étiquette}</p>
               </div>
             </div>
             <div className="flex justify-end space-x-4 pt-6">
               <button
                 onClick={() => {
-                  setShowMissionForm(false)
+                  onClose()
                 }}
                 className="px-6 py-3 border border-gray-300 rounded-lg text-lg"
               >
@@ -91,10 +91,9 @@ export default function MissionForm({
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={editingMission ? editingMission.nom : newMission.nom}
-                onChange={(e) => editingMission
-                  ? setEditingMission({...editingMission, nom: e.target.value})
-                  : setNewMission({...newMission, nom: e.target.value})
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({...formData, name: e.target.value})
                 }
               />
             </div>
@@ -103,10 +102,9 @@ export default function MissionForm({
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={editingMission ? editingMission.client : newMission.client}
-                onChange={(e) => editingMission
-                  ? setEditingMission({...editingMission, client: e.target.value})
-                  : setNewMission({...newMission, client: e.target.value})
+                value={formData.Client}
+                onChange={(e) =>
+                  setFormData({...formData, Client: e.target.value})
                 }
               />
             </div>
@@ -116,10 +114,9 @@ export default function MissionForm({
                 <input
                   type="date"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                  value={editingMission ? editingMission.date : newMission.date}
-                  onChange={(e) => editingMission
-                    ? setEditingMission({...editingMission, date: e.target.value})
-                    : setNewMission({...newMission, date: e.target.value})
+                  value={formData.mission_date}
+                  onChange={(e) =>
+                    setFormData({...formData, mission_date: e.target.value})
                   }
                 />
               </div>
@@ -128,10 +125,9 @@ export default function MissionForm({
                 <input
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                  value={editingMission ? editingMission.lieu : newMission.lieu}
-                  onChange={(e) => editingMission
-                    ? setEditingMission({...editingMission, lieu: e.target.value})
-                    : setNewMission({...newMission, lieu: e.target.value})
+                  value={formData.Lieu}
+                  onChange={(e) =>
+                    setFormData({...formData, Lieu: e.target.value})
                   }
                 />
               </div>
@@ -141,48 +137,61 @@ export default function MissionForm({
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={editingMission ? editingMission.etiquette : newMission.etiquette}
-                onChange={(e) => editingMission
-                  ? setEditingMission({...editingMission, etiquette: e.target.value})
-                  : setNewMission({...newMission, etiquette: e.target.value})
+                value={formData.Étiquette}
+                onChange={(e) =>
+                  setFormData({...formData, Étiquette: e.target.value})
                 }
               />
             </div>
             <div className="flex justify-end space-x-4 pt-6">
               <button
                 onClick={() => {
-                  setShowMissionForm(false)
-                  setEditingMission(null)
+                  onClose()
                 }}
                 className="px-6 py-3 border border-gray-300 rounded-lg text-lg"
               >
                 Annuler
               </button>
               <button
-                onClick={() => {
-                  if (editingMission) {
-                    setMissions(missions.map(m =>
-                      m.id === editingMission.id ? editingMission : m
-                    ))
-                  } else {
-                    setMissions([...missions, {
-                      ...newMission,
-                      id: Date.now().toString()
-                    }])
-                    setNewMission({
-                      nom: '',
-                      client: '',
-                      date: new Date().toISOString().split('T')[0],
-                      lieu: '',
-                      etiquette: ''
-                    })
+                onClick={async () => {
+                  try {
+                    // Vérification de l'authentification
+                    const { data: { user }, error: authError } = await supabase.auth.getUser()
+                    
+                    if (authError || !user) {
+                      throw new Error('Utilisateur non authentifié')
+                    }
+              
+                    if (mission) {
+                      // Utilisation de supabaseAdmin pour les opérations admin
+                      const { data, error } = await supabaseAdmin
+                        .from('missions')
+                        .update(formData)
+                        .eq('id', mission.id)
+                        .select()
+                        .single()
+                     
+                      if (error) throw error
+                      onMissionSaved(data)
+                    } else {
+                      const { data, error } = await supabaseAdmin
+                        .from('missions')
+                        .insert(formData)
+                        .select()
+                        .single()
+                     
+                      if (error) throw error
+                      onMissionSaved(data)
+                    }
+                    onClose()
+                  } catch (err) {
+                    console.error('Erreur Supabase:', err)
+                    alert(`Erreur lors de la sauvegarde: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
                   }
-                  setShowMissionForm(false)
-                  setEditingMission(null)
                 }}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg text-lg"
               >
-                {editingMission ? 'Modifier' : 'Créer'}
+                {mission ? 'Modifier' : 'Créer'}
               </button>
             </div>
           </div>

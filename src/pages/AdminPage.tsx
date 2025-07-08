@@ -19,37 +19,13 @@ import {
   Building
 } from 'lucide-react'
 
-export type Mission = {
-  id: string
-  nom: string
-  client: string
-  date: string
-  lieu: string
-  etiquette: string
-}
+import type { Mission } from '../types/mission'
 
 import { User, UserMetadata } from '../types/user'
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard')
-  const [missions, setMissions] = useState<Mission[]>([
-    {
-      id: '1',
-      nom: 'Audit sécurité',
-      client: 'Tech Corp',
-      date: '2024-12-15',
-      lieu: 'Paris',
-      etiquette: 'Sécurité'
-    },
-    {
-      id: '2',
-      nom: 'Formation équipe',
-      client: 'StartUp Inc',
-      date: '2024-12-20',
-      lieu: 'Lyon',
-      etiquette: 'Formation'
-    }
-  ])
+  const [missions, setMissions] = useState<Mission[]>([])
   
   const [users, setUsers] = useState<User[]>([])
 
@@ -76,20 +52,49 @@ export default function AdminPage() {
       })))
     }
 
+    const fetchMissions = async () => {
+      setIsLoading(true)
+      try {
+        console.log('Tentative de chargement des missions depuis Supabase...')
+        const { data, error } = await supabase
+          .from('missions')
+          .select('*')
+          .order('date', { ascending: false })
+        
+        if (error) {
+          console.error('Erreur lors du chargement des missions:', {
+            message: error.message,
+            code: error.code,
+            details: error.details,
+            hint: error.hint
+          })
+          return
+        }
+        console.log('Missions chargées avec succès:', data?.length)
+        setMissions(data || [])
+      } catch (err) {
+        console.error('Erreur inattendue:', err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
     fetchUsers()
+    fetchMissions()
   }, [])
 
   const [showMissionForm, setShowMissionForm] = useState(false)
   const [showUserForm, setShowUserForm] = useState(false)
   const [editingMission, setEditingMission] = useState<Mission | null>(null)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [newMission, setNewMission] = useState<Omit<Mission, 'id'>>({
-    nom: '',
-    client: '',
-    date: new Date().toISOString().split('T')[0],
-    lieu: '',
-    etiquette: ''
+    name: '',
+    Client: '',
+    mission_date: new Date().toISOString().split('T')[0],
+    Lieu: '',
+    Étiquette: ''
   })
   const [newUser, setNewUser] = useState<Omit<User, 'id'>>({
     email: '',
@@ -157,11 +162,11 @@ export default function AdminPage() {
             <div key={mission.id} className="flex items-center p-3 bg-gray-50 rounded-lg">
               <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
               <div className="flex-1">
-                <p className="text-sm font-medium">{mission.nom}</p>
-                <p className="text-xs text-gray-500">{mission.client}</p>
+                <p className="text-sm font-medium">{mission.name}</p>
+                <p className="text-xs text-gray-500">{mission.Client}</p>
               </div>
               <span className="text-xs text-gray-500">
-                {new Date(mission.date).toLocaleDateString('fr-FR')}
+                {new Date(mission.mission_date).toLocaleDateString('fr-FR')}
               </span>
             </div>
           ))}
@@ -258,8 +263,8 @@ export default function AdminPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {missions
                 .filter(mission => 
-                  mission.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  mission.client.toLowerCase().includes(searchTerm.toLowerCase())
+                  mission.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  mission.Client.toLowerCase().includes(searchTerm.toLowerCase())
                 )
                 .map((mission) => (
                 <tr key={mission.id} className="hover:bg-gray-50">
@@ -269,24 +274,24 @@ export default function AdminPage() {
                         <Calendar className="h-4 w-4 text-blue-600" />
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{mission.nom}</div>
-                        <div className="text-sm text-gray-500">{mission.etiquette}</div>
+                        <div className="text-sm font-medium text-gray-900">{mission.name}</div>
+                        <div className="text-sm text-gray-500">{mission.Étiquette}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Building className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{mission.client}</span>
+                      <span className="text-sm text-gray-900">{mission.Client}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {new Date(mission.date).toLocaleDateString('fr-FR')}
+                    {new Date(mission.mission_date).toLocaleDateString('fr-FR')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{mission.lieu}</span>
+                      <span className="text-sm text-gray-900">{mission.Lieu}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -300,7 +305,16 @@ export default function AdminPage() {
                       <Edit2 className="h-4 w-4" />
                     </button>
                     <button 
-                      onClick={() => {
+                      onClick={async () => {
+                        const { error } = await supabase
+                          .from('missions')
+                          .delete()
+                          .eq('id', mission.id)
+                        
+                        if (error) {
+                          console.error('Erreur lors de la suppression:', error)
+                          return
+                        }
                         setMissions(missions.filter(m => m.id !== mission.id))
                       }}
                       className="text-red-600 hover:text-red-900"
@@ -442,13 +456,52 @@ export default function AdminPage() {
       <div className="flex h-screen">
         {showMissionForm && (
           <MissionForm
-            editingMission={editingMission}
-            newMission={newMission}
-            missions={missions}
-            setEditingMission={setEditingMission}
-            setNewMission={setNewMission}
-            setMissions={setMissions}
-            setShowMissionForm={setShowMissionForm}
+            onClose={() => {
+              setShowMissionForm(false)
+              setEditingMission(null)
+            }}
+            mission={editingMission}
+            onMissionSaved={async (missionData) => {
+              try {
+                const operation = editingMission
+                  ? supabase
+                      .from('missions')
+                      .update(missionData)
+                      .eq('id', editingMission.id)
+                      .select()
+                      .single()
+                  : supabase
+                      .from('missions')
+                      .insert(missionData)
+                      .select()
+                      .single();
+
+                const { data, error } = await operation;
+
+                if (error) {
+                  console.error('Erreur opération mission:', {
+                    message: error.message,
+                    code: error.code,
+                    details: error.details,
+                    data: missionData
+                  });
+                  throw error;
+                }
+
+                // Mise à jour de l'état
+                setMissions(editingMission
+                  ? missions.map(m => m.id === data.id ? data : m)
+                  : [data, ...missions]
+                );
+
+                setShowMissionForm(false);
+                setEditingMission(null);
+                return data;
+              } catch (error) {
+                console.error('Erreur globale dans onMissionSaved:', error);
+                throw error;
+              }
+            }}
           />
         )}
         {showUserForm && (
