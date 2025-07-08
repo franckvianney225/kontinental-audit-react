@@ -84,9 +84,9 @@ const GallerySection = () => {
   };
 
   return (
-    <section className="gallery-section py-12">
+    <section className="gallery-section py-12 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">Nos Domaines d'Expertise</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center dark:text-white">Nos Domaines d'Expertise</h2>
         <div className="relative w-full max-w-4xl mx-auto">
           <Carousel 
             plugins={[Autoplay(autoplayOptions)]}
@@ -109,7 +109,7 @@ const GallerySection = () => {
                       />
                       {hoveredIndex === index && (
                         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 rounded-lg">
-                          <p className="text-white text-center">
+                          <p className="text-white text-center dark:text-opacity-90">
                             {img.legend} - {getRandomLegend()}
                           </p>
                         </div>
@@ -119,8 +119,8 @@ const GallerySection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <CarouselPrevious className="hidden md:flex" />
-            <CarouselNext className="hidden md:flex" />
+            <CarouselPrevious className="hidden md:flex dark:text-white dark:border-white" />
+            <CarouselNext className="hidden md:flex dark:text-white dark:border-white" />
           </Carousel>
         </div>
       </div>

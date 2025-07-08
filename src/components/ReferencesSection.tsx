@@ -191,14 +191,14 @@ const ReferencesSection = () => {
   const displayedMissions = getDisplayedMissions();
 
   return (
-    <section id="references" className="py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <section id="references" className="py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Nos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Références</span>
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 dark:text-gray-300 max-w-2xl mx-auto">
             Découvrez notre expertise à travers nos collaborations avec des entreprises de renom
           </p>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-6 rounded-full"></div>
@@ -251,7 +251,7 @@ const ReferencesSection = () => {
                   key={mission.id}
                   onMouseEnter={() => setHoveredCard(mission.id.toString())}
                   onMouseLeave={() => setHoveredCard(null)}
-                  className={`group relative bg-white rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-100 overflow-hidden ${
+                  className={`group relative bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-100 dark:border-gray-700 overflow-hidden ${
                     hoveredCard === mission.id.toString() ? 'ring-2 ring-blue-500/20' : ''
                   }`}
                 >
@@ -270,7 +270,7 @@ const ReferencesSection = () => {
 
                   {/* Content */}
                   <div className="relative z-10">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-600 transition-colors">
                       {mission.name}
                     </h3>
                     
@@ -286,16 +286,16 @@ const ReferencesSection = () => {
                       <div className="flex items-center gap-3">
                         <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                         <div>
-                          <span className="font-semibold text-slate-700">Lieu :</span>
-                          <span className="text-slate-600 ml-2">{mission.lieu}</span>
+                          <span className="font-semibold text-slate-700 dark:text-gray-300">Lieu :</span>
+                          <span className="text-slate-600 dark:text-gray-400 ml-2">{mission.lieu}</span>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-3">
                         <Calendar className="w-4 h-4 text-purple-500 flex-shrink-0" />
                         <div>
-                          <span className="font-semibold text-slate-700">Date :</span>
-                          <span className="text-slate-600 ml-2">
+                          <span className="font-semibold text-slate-700 dark:text-gray-300">Date :</span>
+                          <span className="text-slate-600 dark:text-gray-400 ml-2">
                             {new Date(mission.mission_date).toLocaleDateString('fr-FR', {
                               year: 'numeric',
                               month: 'long',
@@ -340,17 +340,17 @@ const ReferencesSection = () => {
         {/* Stats Section */}
         {missions.length > 0 && (
           <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
               <div className="text-3xl font-bold text-blue-600 mb-2">{missions.length}+</div>
-              <div className="text-slate-600">Projets réalisés</div>
+              <div className="text-slate-600 dark:text-gray-300">Projets réalisés</div>
             </div>
-            <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
               <div className="text-3xl font-bold text-emerald-600 mb-2">{categories.length}</div>
-              <div className="text-slate-600">Catégories de services</div>
+              <div className="text-slate-600 dark:text-gray-300">Catégories de services</div>
             </div>
-            <div className="text-center p-6 bg-white rounded-2xl shadow-lg">
+            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg">
               <div className="text-3xl font-bold text-purple-600 mb-2">100%</div>
-              <div className="text-slate-600">Satisfaction client</div>
+              <div className="text-slate-600 dark:text-gray-300">Satisfaction client</div>
             </div>
           </div>
         )}

@@ -76,14 +76,14 @@ const About = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900">
+    <div className="bg-gradient-to-b from-white to-blue-50 dark:bg-gradient-to-b dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 text-gray-900 dark:text-gray-100 relative overflow-hidden">
+      <section className="py-20 bg-gradient-to-b from-white to-blue-50 dark:bg-gradient-to-b dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 text-gray-900 dark:text-gray-100 relative overflow-hidden">
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-16">
             <h1 className={`text-5xl md:text-6xl font-extrabold mb-8 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-700 dark:from-orange-400 dark:to-orange-600">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-700 dark:from-orange-300 dark:to-orange-500">
                 À PROPOS DE KL
               </span>
             </h1>
@@ -113,7 +113,7 @@ const About = () => {
       </section>
 
       {/* Main Content */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      <section className="py-20 bg-white dark:bg-gradient-to-b dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center mb-20">
             {/* Left Content */}

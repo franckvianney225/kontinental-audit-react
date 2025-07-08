@@ -28,12 +28,12 @@ const TeamSection = () => {
   ];
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-800">
+    <section className="py-16 bg-gray-50 dark:bg-gradient-to-b dark:from-gray-900 dark:via-gray-900 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-5xl font-extrabold mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-700 dark:from-orange-400 dark:to-orange-600">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-orange-500 to-orange-700 dark:from-orange-300 dark:to-orange-500">
               NOTRE ÉQUIPE DE DIRECTION
             </span>
           </h2>
@@ -66,7 +66,7 @@ const TeamSection = () => {
                 <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1">
                   {member.name}
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">
+                <p className="text-gray-500 dark:text-gray-300 text-sm">
                   {member.role}
                 </p>
               </div>

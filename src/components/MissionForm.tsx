@@ -47,9 +47,121 @@ export default function MissionForm({
     return null
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Verrou strict contre les soumissions multiples
+    if (isSubmitting || submissionId) {
+      console.log('Blocage soumission - Déjà en cours avec ID:', submissionId)
+      alert('Une soumission est déjà en cours')
+      return
+    }
+    
+    // Début de la soumission avec verrouillage
+    setIsSubmitting(true)
+    const currentSubmissionId = crypto.randomUUID()
+    setSubmissionId(currentSubmissionId)
+    console.log('Début soumission - Nouvel ID:', currentSubmissionId)
+    
+    try {
+      // Délai minimum avant insertion (500ms)
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Vérification de l'authentification
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      
+      if (authError || !user) {
+        throw new Error('Utilisateur non authentifié')
+      }
+
+      // Vérification des doublons avant insertion
+      if (!mission) {
+        const { data: existing, error: selectDupError } = await supabaseAdmin
+          .from('missions')
+          .select('id')
+          .eq('name', formData.name)
+          .eq('client', formData.client)
+          .eq('mission_date', new Date(formData.mission_date).toISOString())
+          .maybeSingle()
+
+        if (selectDupError) throw selectDupError
+        if (existing) {
+          alert('Une mission identique existe déjà.')
+          setIsSubmitting(false)
+          setSubmissionId(null)
+          return
+        }
+      }
+
+      // Log des données envoyées
+      console.log('Données envoyées à Supabase:', {
+        ...formData,
+        mission_date: new Date(formData.mission_date).toISOString()
+      })
+     
+      if (mission) {
+        console.log('Tentative de mise à jour mission ID:', mission.id)
+        const { data: updatedMission, error } = await supabaseAdmin
+          .from('missions')
+          .update({
+            ...formData,
+            mission_date: new Date(formData.mission_date).toISOString()
+          })
+          .eq('id', mission.id)
+          .select()
+          .single()
+
+        if (error) throw error
+        if (!updatedMission) throw new Error('Aucune donnée retournée après mise à jour')
+
+        onMissionSaved(updatedMission)
+      } else {
+        const { data: newMission, error } = await supabaseAdmin
+          .from('missions')
+          .insert({
+            ...formData,
+            mission_date: new Date(formData.mission_date).toISOString(),
+            category_id: formData.category_id
+          })
+          .select()
+          .single()
+
+        if (error) {
+          if (error.code === '23505') {
+            alert('Cette mission existe déjà (doublon bloqué par la base de données).')
+          } else {
+            alert(`Erreur lors de l'insertion: ${error.message}`)
+          }
+          throw error
+        }
+        if (!newMission) throw new Error('Aucune donnée retournée après insertion')
+
+        console.log('Insertion réussie - ID:', currentSubmissionId)
+        onMissionSaved(newMission)
+      }
+      onClose()
+    } catch (err) {
+      console.error('Erreur complète Supabase:', err)
+      
+      // Réinitialisation complète après erreur
+      setIsSubmitting(false)
+      setSubmissionId(null)
+      
+      if (err instanceof Error) {
+        if (err.message.includes('23505')) {
+          alert('Cette mission existe déjà. Veuillez vérifier les données.')
+        } else {
+          alert(`Erreur technique: ${err.message}`)
+        }
+      } else {
+        alert('Erreur inconnue lors de la sauvegarde')
+      }
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 w-full max-w-2xl">
+      <form onSubmit={handleSubmit} className="bg-white rounded-lg p-8 w-full max-w-2xl">
         <h2 className="text-2xl font-bold mb-6">
           {viewMode ? 'Détails mission' : mission ? 'Modifier mission' : 'Nouvelle mission'}
         </h2>
@@ -191,136 +303,17 @@ export default function MissionForm({
                 Annuler
               </button>
               <button
-                onClick={async () => {
-                  const currentSubmissionId = crypto.randomUUID()
-                  setSubmissionId(currentSubmissionId)
-                  
-                  if (isSubmitting) {
-                    console.log('Soumission déjà en cours - ID:', submissionId)
-                    return
-                  }
-                  setIsSubmitting(true)
-                  try {
-                    console.log('Début de la soumission - ID:', currentSubmissionId)
-                    // Vérification de l'authentification
-                    const { data: { user }, error: authError } = await supabase.auth.getUser()
-                    
-                    if (authError || !user) {
-                      throw new Error('Utilisateur non authentifié')
-                    }
-
-                    // Log des données envoyées
-                    console.log('Données envoyées à Supabase:', {
-                      ...formData,
-                      mission_date: new Date(formData.mission_date).toISOString()
-                    })
-               
-                    if (mission) {
-                      console.log('Tentative de mise à jour mission ID:', mission.id)
-                      // Mise à jour avec le client admin pour contourner RLS
-                      // Mise à jour avec gestion améliorée du retour
-                      const { error: updateError } = await supabaseAdmin
-                        .from('missions')
-                        .update({
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString()
-                        })
-                        .eq('id', mission.id)
-                      
-                      if (updateError) {
-                        console.error('Erreur mise à jour:', updateError)
-                        throw updateError
-                      }
-
-                      // Requête séparée pour récupérer la mission mise à jour
-                      const { data: updatedMission, error: selectError } = await supabaseAdmin
-                        .from('missions')
-                        .select('*')
-                        .eq('id', mission.id)
-                        .maybeSingle()
-
-                      if (selectError) {
-                        console.warn('Impossible de récupérer la mission mise à jour:', selectError)
-                        // On retourne quand même la version mise à jour localement
-                        onMissionSaved({
-                          ...mission,
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString()
-                        })
-                      } else if (updatedMission) {
-                        onMissionSaved(updatedMission)
-                      } else {
-                        console.warn('Aucune donnée retournée après mise à jour')
-                        onMissionSaved({
-                          ...mission,
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString()
-                        })
-                      }
-                    } else {
-                      // Insertion avec le client admin pour contourner RLS si nécessaire
-                      // Insertion avec gestion améliorée du retour
-                      const { error: insertError } = await supabaseAdmin
-                        .from('missions')
-                        .insert({
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString(),
-                          category_id: formData.category_id
-                        })
-                      
-                      if (insertError) {
-                        console.error('Erreur insertion - ID:', currentSubmissionId, insertError)
-                        throw insertError
-                      }
-                      console.log('Insertion réussie - ID:', currentSubmissionId)
-
-                      // Requête séparée pour récupérer la dernière mission créée
-                      const { data: newMission, error: selectError } = await supabaseAdmin
-                        .from('missions')
-                        .select('*')
-                        .order('created_at', { ascending: false })
-                        .limit(1)
-                        .maybeSingle()
-
-                      if (selectError) {
-                        console.warn('Impossible de récupérer la nouvelle mission:', selectError)
-                        // On retourne une version locale avec un ID temporaire
-                        onMissionSaved({
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString(),
-                          id: Math.floor(Math.random() * 1000000)
-                        })
-                      } else if (newMission) {
-                        onMissionSaved(newMission)
-                      } else {
-                        console.warn('Aucune donnée retournée après insertion')
-                        onMissionSaved({
-                          ...formData,
-                          mission_date: new Date(formData.mission_date).toISOString(),
-                          id: Math.floor(Math.random() * 1000000)
-                        })
-                      }
-                    }
-                    onClose()
-                  } catch (err) {
-                    setIsSubmitting(false)
-                    console.error('Erreur complète Supabase:', err)
-                    if (err instanceof Error) {
-                      alert(`Erreur détaillée: ${err.message}`)
-                    } else {
-                      alert('Erreur inconnue lors de la sauvegarde')
-                    }
-                  }
-                }}
+                type="submit"
                 className={`px-6 py-3 bg-blue-600 text-white rounded-lg text-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                 disabled={isSubmitting}
+                onMouseDown={(e) => isSubmitting && e.preventDefault()}
               >
                 {mission ? 'Modifier' : 'Créer'}
               </button>
             </div>
           </div>
         )}
-      </div>
+      </form>
     </div>
   )
 }
