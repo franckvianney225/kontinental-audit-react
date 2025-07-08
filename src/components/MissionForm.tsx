@@ -23,6 +23,8 @@ export default function MissionForm({
     category_id: null
   })
   const [categories, setCategories] = useState<Array<{id: number, titre: string, description: string}>>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submissionId, setSubmissionId] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -190,7 +192,16 @@ export default function MissionForm({
               </button>
               <button
                 onClick={async () => {
+                  const currentSubmissionId = crypto.randomUUID()
+                  setSubmissionId(currentSubmissionId)
+                  
+                  if (isSubmitting) {
+                    console.log('Soumission déjà en cours - ID:', submissionId)
+                    return
+                  }
+                  setIsSubmitting(true)
                   try {
+                    console.log('Début de la soumission - ID:', currentSubmissionId)
                     // Vérification de l'authentification
                     const { data: { user }, error: authError } = await supabase.auth.getUser()
                     
@@ -207,45 +218,92 @@ export default function MissionForm({
                     if (mission) {
                       console.log('Tentative de mise à jour mission ID:', mission.id)
                       // Mise à jour avec le client admin pour contourner RLS
-                      const { data, error } = await supabaseAdmin
+                      // Mise à jour avec gestion améliorée du retour
+                      const { error: updateError } = await supabaseAdmin
                         .from('missions')
                         .update({
                           ...formData,
                           mission_date: new Date(formData.mission_date).toISOString()
                         })
                         .eq('id', mission.id)
+                      
+                      if (updateError) {
+                        console.error('Erreur mise à jour:', updateError)
+                        throw updateError
+                      }
+
+                      // Requête séparée pour récupérer la mission mise à jour
+                      const { data: updatedMission, error: selectError } = await supabaseAdmin
+                        .from('missions')
                         .select('*')
+                        .eq('id', mission.id)
                         .maybeSingle()
-                     
-                      if (error) {
-                        console.error('Détails erreur Supabase:', error)
-                        throw error
+
+                      if (selectError) {
+                        console.warn('Impossible de récupérer la mission mise à jour:', selectError)
+                        // On retourne quand même la version mise à jour localement
+                        onMissionSaved({
+                          ...mission,
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString()
+                        })
+                      } else if (updatedMission) {
+                        onMissionSaved(updatedMission)
+                      } else {
+                        console.warn('Aucune donnée retournée après mise à jour')
+                        onMissionSaved({
+                          ...mission,
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString()
+                        })
                       }
-                      if (!data) {
-                        throw new Error('Mission introuvable - vérifiez que l\'ID est correct')
-                      }
-                      onMissionSaved(data)
                     } else {
                       // Insertion avec le client admin pour contourner RLS si nécessaire
-                      const { data, error } = await supabaseAdmin
+                      // Insertion avec gestion améliorée du retour
+                      const { error: insertError } = await supabaseAdmin
                         .from('missions')
                         .insert({
                           ...formData,
                           mission_date: new Date(formData.mission_date).toISOString(),
-                          category_id: formData.category_id,
-                          id: Math.floor(Math.random() * 1000000) // ID temporaire
+                          category_id: formData.category_id
                         })
-                        .select()
-                        .single()
-                     
-                      if (error) {
-                        console.error('Détails erreur Supabase:', error)
-                        throw error
+                      
+                      if (insertError) {
+                        console.error('Erreur insertion - ID:', currentSubmissionId, insertError)
+                        throw insertError
                       }
-                      onMissionSaved(data)
+                      console.log('Insertion réussie - ID:', currentSubmissionId)
+
+                      // Requête séparée pour récupérer la dernière mission créée
+                      const { data: newMission, error: selectError } = await supabaseAdmin
+                        .from('missions')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .limit(1)
+                        .maybeSingle()
+
+                      if (selectError) {
+                        console.warn('Impossible de récupérer la nouvelle mission:', selectError)
+                        // On retourne une version locale avec un ID temporaire
+                        onMissionSaved({
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString(),
+                          id: Math.floor(Math.random() * 1000000)
+                        })
+                      } else if (newMission) {
+                        onMissionSaved(newMission)
+                      } else {
+                        console.warn('Aucune donnée retournée après insertion')
+                        onMissionSaved({
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString(),
+                          id: Math.floor(Math.random() * 1000000)
+                        })
+                      }
                     }
                     onClose()
                   } catch (err) {
+                    setIsSubmitting(false)
                     console.error('Erreur complète Supabase:', err)
                     if (err instanceof Error) {
                       alert(`Erreur détaillée: ${err.message}`)
@@ -254,7 +312,8 @@ export default function MissionForm({
                     }
                   }
                 }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg text-lg"
+                className={`px-6 py-3 bg-blue-600 text-white rounded-lg text-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={isSubmitting}
               >
                 {mission ? 'Modifier' : 'Créer'}
               </button>
