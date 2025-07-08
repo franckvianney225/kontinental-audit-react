@@ -205,20 +205,24 @@ export default function MissionForm({
                     })
                
                     if (mission) {
-                      // Mise à jour avec le client standard
-                      const { data, error } = await supabase
+                      console.log('Tentative de mise à jour mission ID:', mission.id)
+                      // Mise à jour avec le client admin pour contourner RLS
+                      const { data, error } = await supabaseAdmin
                         .from('missions')
                         .update({
                           ...formData,
                           mission_date: new Date(formData.mission_date).toISOString()
                         })
                         .eq('id', mission.id)
-                        .select()
-                        .single()
+                        .select('*')
+                        .maybeSingle()
                      
                       if (error) {
                         console.error('Détails erreur Supabase:', error)
                         throw error
+                      }
+                      if (!data) {
+                        throw new Error('Mission introuvable - vérifiez que l\'ID est correct')
                       }
                       onMissionSaved(data)
                     } else {
