@@ -1,0 +1,6 @@
+const supabaseConfig = {
+  url: 'https://ceillfyjxmsedxrosqux.supabase.co',
+  anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNlaWxsZnlqeG1zZWR4cm9zcXV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE5MTcyMzQsImV4cCI6MjA2NzQ5MzIzNH0.BVQdQLo6tnTRlRATooygOPkkVMc3dz6x2XgMS_lyNwA'
+}
+
+export default supabaseConfig

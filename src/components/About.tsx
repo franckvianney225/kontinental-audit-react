@@ -19,7 +19,7 @@ const About = () => {
 
   const stats = [
     {
-      number: "15+",
+      number: "20+",
       label: "Années d'expérience",
       icon: <Clock className="w-6 h-6 text-white" />,
       description: "Expertise accumulée depuis 2008",
@@ -49,7 +49,7 @@ const About = () => {
   ];
 
   const advantages = [
-    "Expertise reconnue depuis plus de 15 ans",
+    "Expertise reconnue depuis plus de 20 ans",
     "Équipe de professionnels certifiés",
     "Approche personnalisée pour chaque client",
     "Solutions adaptées aux enjeux actuels",
@@ -88,7 +88,7 @@ const About = () => {
               </span>
             </h1>
             <p className={`text-2xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed transition-all duration-1000 delay-300 mt-4 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              Votre partenaire de confiance pour l'audit et la formation en Côte d'Ivoire depuis plus de 15 ans
+              Votre partenaire de confiance pour l'audit et la formation en Côte d'Ivoire depuis plus de 20 ans
             </p>
           </div>
 
@@ -124,7 +124,7 @@ const About = () => {
                 </h2>
                 <div className="space-y-6 text-lg text-slate-600 dark:text-gray-300 leading-relaxed">
                   <p>
-                    Depuis plus de 15 ans, KONTINENTAL (KL) s'impose comme un acteur incontournable dans le domaine de l'audit et de la formation en Côte d'Ivoire. Notre expertise multidisciplinaire nous permet d'accompagner les entreprises dans leur développement et leur mise en conformité.
+                    Depuis plus de 20 ans, KONTINENTAL (KL) s'impose comme un acteur incontournable dans le domaine de l'audit et de la formation en Côte d'Ivoire. Notre expertise multidisciplinaire nous permet d'accompagner les entreprises dans leur développement et leur mise en conformité.
                   </p>
                   <p>
                     Basée à Abidjan, notre équipe d'experts qualifiés met son savoir-faire au service de votre réussite. Nous combinons rigueur méthodologique et approche personnalisée pour répondre aux besoins spécifiques de chaque client.
