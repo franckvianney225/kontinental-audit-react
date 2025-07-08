@@ -1,10 +1,11 @@
 export type Mission = {
-  id: string
+  id?: number
   name: string
-  Client: string
+  client: string
   mission_date: string
-  Lieu: string
-  Étiquette: string
+  lieu: string
+  etiquette: string
+  category_id: number | null
   created_at?: string
   updated_at?: string
 }

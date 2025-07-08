@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase, supabaseAdmin } from '../lib/supabaseClient'
 import type { Mission } from '../types/mission'
 
@@ -16,11 +16,42 @@ export default function MissionForm({
   const [viewMode, setViewMode] = useState(!!mission)
   const [formData, setFormData] = useState<Omit<Mission, 'id'>>(mission || {
     name: '',
-    Client: '',
+    client: '',
     mission_date: new Date().toISOString().split('T')[0],
-    Lieu: '',
-    Étiquette: ''
+    lieu: '',
+    etiquette: '',
+    category_id: null
   })
+  const [categories, setCategories] = useState<Array<{id: number, titre: string, description: string}>>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id,titre,description')
+        .order('titre', { ascending: true })
+      
+      if (error) {
+        console.error('Error fetching categories:', error)
+      } else {
+        setCategories(data)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('id, name')
+        .order('name')
+      
+      if (data) setCategories(data)
+    }
+    fetchCategories()
+  }, [])
 
   if (viewMode && !mission) {
     return null
@@ -48,7 +79,7 @@ export default function MissionForm({
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-lg font-medium text-gray-500">Client</p>
-                <p className="text-xl text-gray-900 mt-1">{mission?.Client}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.client}</p>
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-500">Date</p>
@@ -58,11 +89,11 @@ export default function MissionForm({
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <p className="text-lg font-medium text-gray-500">Lieu</p>
-                <p className="text-xl text-gray-900 mt-1">{mission?.Lieu}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.lieu}</p>
               </div>
               <div>
                 <p className="text-lg font-medium text-gray-500">Étiquette</p>
-                <p className="text-xl text-gray-900 mt-1">{mission?.Étiquette}</p>
+                <p className="text-xl text-gray-900 mt-1">{mission?.etiquette}</p>
               </div>
             </div>
             <div className="flex justify-end space-x-4 pt-6">
@@ -102,9 +133,9 @@ export default function MissionForm({
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={formData.Client}
+                value={formData.client}
                 onChange={(e) =>
-                  setFormData({...formData, Client: e.target.value})
+                  setFormData({...formData, client: e.target.value})
                 }
               />
             </div>
@@ -125,9 +156,9 @@ export default function MissionForm({
                 <input
                   type="text"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                  value={formData.Lieu}
+                  value={formData.lieu}
                   onChange={(e) =>
-                    setFormData({...formData, Lieu: e.target.value})
+                    setFormData({...formData, lieu: e.target.value})
                   }
                 />
               </div>
@@ -137,11 +168,28 @@ export default function MissionForm({
               <input
                 type="text"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
-                value={formData.Étiquette}
+                value={formData.etiquette}
                 onChange={(e) =>
-                  setFormData({...formData, Étiquette: e.target.value})
+                  setFormData({...formData, etiquette: e.target.value})
                 }
               />
+            </div>
+            <div>
+              <label className="block text-lg font-medium text-gray-700 mb-2">Catégorie</label>
+              <select
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg text-lg"
+                value={formData.category_id || ''}
+                onChange={(e) =>
+                  setFormData({...formData, category_id: e.target.value ? Number(e.target.value) : null})
+                }
+              >
+                <option value="">Sélectionnez une catégorie</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.titre}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex justify-end space-x-4 pt-6">
               <button
@@ -161,32 +209,57 @@ export default function MissionForm({
                     if (authError || !user) {
                       throw new Error('Utilisateur non authentifié')
                     }
-              
+
+                    // Log des données envoyées
+                    console.log('Données envoyées à Supabase:', {
+                      ...formData,
+                      mission_date: new Date(formData.mission_date).toISOString()
+                    })
+               
                     if (mission) {
-                      // Utilisation de supabaseAdmin pour les opérations admin
-                      const { data, error } = await supabaseAdmin
+                      // Mise à jour avec le client standard
+                      const { data, error } = await supabase
                         .from('missions')
-                        .update(formData)
+                        .update({
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString()
+                        })
                         .eq('id', mission.id)
                         .select()
                         .single()
                      
-                      if (error) throw error
+                      if (error) {
+                        console.error('Détails erreur Supabase:', error)
+                        throw error
+                      }
                       onMissionSaved(data)
                     } else {
+                      // Insertion avec le client admin pour contourner RLS si nécessaire
                       const { data, error } = await supabaseAdmin
                         .from('missions')
-                        .insert(formData)
+                        .insert({
+                          ...formData,
+                          mission_date: new Date(formData.mission_date).toISOString(),
+                          category_id: formData.category_id,
+                          id: Math.floor(Math.random() * 1000000) // ID temporaire
+                        })
                         .select()
                         .single()
                      
-                      if (error) throw error
+                      if (error) {
+                        console.error('Détails erreur Supabase:', error)
+                        throw error
+                      }
                       onMissionSaved(data)
                     }
                     onClose()
                   } catch (err) {
-                    console.error('Erreur Supabase:', err)
-                    alert(`Erreur lors de la sauvegarde: ${err instanceof Error ? err.message : 'Erreur inconnue'}`)
+                    console.error('Erreur complète Supabase:', err)
+                    if (err instanceof Error) {
+                      alert(`Erreur détaillée: ${err.message}`)
+                    } else {
+                      alert('Erreur inconnue lors de la sauvegarde')
+                    }
                   }
                 }}
                 className="px-6 py-3 bg-blue-600 text-white rounded-lg text-lg"

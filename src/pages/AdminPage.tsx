@@ -59,7 +59,7 @@ export default function AdminPage() {
         const { data, error } = await supabase
           .from('missions')
           .select('*')
-          .order('date', { ascending: false })
+          .order('mission_date', { ascending: false })
         
         if (error) {
           console.error('Erreur lors du chargement des missions:', {
@@ -91,10 +91,11 @@ export default function AdminPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [newMission, setNewMission] = useState<Omit<Mission, 'id'>>({
     name: '',
-    Client: '',
+    client: '',
     mission_date: new Date().toISOString().split('T')[0],
-    Lieu: '',
-    Étiquette: ''
+    lieu: '',
+    etiquette: '',
+    category_id: null
   })
   const [newUser, setNewUser] = useState<Omit<User, 'id'>>({
     email: '',
@@ -163,7 +164,7 @@ export default function AdminPage() {
               <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">{mission.name}</p>
-                <p className="text-xs text-gray-500">{mission.Client}</p>
+                <p className="text-xs text-gray-500">{mission.client}</p>
               </div>
               <span className="text-xs text-gray-500">
                 {new Date(mission.mission_date).toLocaleDateString('fr-FR')}
@@ -264,7 +265,7 @@ export default function AdminPage() {
               {missions
                 .filter(mission => 
                   mission.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                  mission.Client.toLowerCase().includes(searchTerm.toLowerCase())
+                  mission.client.toLowerCase().includes(searchTerm.toLowerCase())
                 )
                 .map((mission) => (
                 <tr key={mission.id} className="hover:bg-gray-50">
@@ -275,14 +276,14 @@ export default function AdminPage() {
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{mission.name}</div>
-                        <div className="text-sm text-gray-500">{mission.Étiquette}</div>
+                        <div className="text-sm text-gray-500">{mission.etiquette}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Building className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{mission.Client}</span>
+                      <span className="text-sm text-gray-900">{mission.client}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -291,7 +292,7 @@ export default function AdminPage() {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <MapPin className="h-4 w-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{mission.Lieu}</span>
+                      <span className="text-sm text-gray-900">{mission.lieu}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -472,7 +473,7 @@ export default function AdminPage() {
                       .single()
                   : supabase
                       .from('missions')
-                      .insert(missionData)
+                      .insert({...missionData, id: undefined}, { returning: 'minimal' }) // Force l'auto-génération de l'ID
                       .select()
                       .single();
 

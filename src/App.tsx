@@ -14,6 +14,7 @@ import ModernServices from "./components/ModernServices";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 import AtoutsPage from "./pages/AtoutsPage";
+import TeamPage from "./pages/TeamPage";
 import NotFound from "./pages/NotFound";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
@@ -34,6 +35,7 @@ const App = () => (
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/a-propos" element={<AboutPage />} />
             <Route path="/nos-atouts" element={<AtoutsPage />} />
+            <Route path="/equipe" element={<TeamPage />} />
             <Route path="/admin" element={
               <ProtectedRoute>
                 <AdminPage />

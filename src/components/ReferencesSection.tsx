@@ -8,7 +8,8 @@ const ReferencesSection = () => {
       { client: "EMUCI", mission: "Audit organisationnel", location: "Abidjan", period: "Août 2024", status: "completed" },
       { client: "CCI-CI", mission: "Business plan pour construction pôle de formation", location: "Abidjan", period: "Mars 2023", status: "completed" },
       { client: "SODISTRA", mission: "Rédaction manuel de procédures", location: "Abidjan", period: "Juin 2021", status: "completed" },
-      { client: "SONAL/SASCI", mission: "Rédaction manuel procédures administratives", location: "Abidjan", period: "Octobre 2020", status: "completed" }
+      { client: "SONAL/SASCI", mission: "Rédaction manuel procédures administratives", location: "Abidjan", period: "Octobre 2020", status: "completed" },
+      { client: "INS", mission: "Rédaction du manuel de procédures administratives financière comptable et", location: "Abidjan", period: "Février 2020", status: "completed" },
     ],
     agrements: [
       { client: "DCH-CP", mission: "Dossier d'agrément", sector: "Agro-industrie", period: "En cours", status: "ongoing" },
@@ -24,6 +25,7 @@ const ReferencesSection = () => {
 
   const [activeTab, setActiveTab] = useState('audits');
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
   const categoryInfo = {
     audits: {
@@ -55,12 +57,12 @@ const ReferencesSection = () => {
         </span>
       );
     }
-    return (
-      <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
-        <div className="w-2 h-2 bg-green-400 rounded-full mr-1.5"></div>
-        Terminé
-      </span>
-    );
+    // return (
+    //   <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+    //     <div className="w-2 h-2 bg-green-400 rounded-full mr-1.5"></div>
+    //     Terminé
+    //   </span>
+    // );
   };
 
   return (
@@ -112,7 +114,7 @@ const ReferencesSection = () => {
               }`}
             >
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {refs.map((ref, index) => (
+                {(showAll ? refs : refs.slice(0, 6)).map((ref, index) => (
                   <div
                     key={index}
                     onMouseEnter={() => setHoveredCard(`${category}-${index}`)}
@@ -174,6 +176,25 @@ const ReferencesSection = () => {
               </div>
             </div>
           ))}
+          
+          <div className="col-span-full flex justify-center mt-8">
+            {!showAll && referencesByCategory[activeTab].length > 6 && (
+              <button
+                onClick={() => setShowAll(true)}
+                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Voir plus de références
+              </button>
+            )}
+            {showAll && (
+              <button
+                onClick={() => setShowAll(false)}
+                className="px-6 py-3 bg-gradient-to-r from-slate-500 to-slate-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 ml-4"
+              >
+                Voir moins
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Stats Section */}
