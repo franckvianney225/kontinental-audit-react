@@ -11,7 +11,7 @@ const ReferencesSection = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [showAll, setShowAll] = useState(false);
 
   const ITEMS_PER_PAGE = 6;
@@ -28,14 +28,22 @@ const ReferencesSection = () => {
         
         setCategories(categoriesData || []);
 
+        // Sélectionner automatiquement la première catégorie si aucune n'est sélectionnée
+        if (categoriesData && categoriesData.length > 0 && !selectedCategory) {
+          setSelectedCategory(categoriesData[0].id);
+        }
+
         // Récupérer les missions
         let query = supabase
           .from('missions')
           .select('*')
           .order('mission_date', { ascending: false });
 
-        if (selectedCategory) {
-          query = query.eq('category_id', selectedCategory);
+        // Utiliser la première catégorie si aucune n'est sélectionnée
+        const categoryToUse = selectedCategory || (categoriesData && categoriesData.length > 0 ? categoriesData[0].id : null);
+        
+        if (categoryToUse) {
+          query = query.eq('category_id', categoryToUse);
         }
 
         const { data: missionsData, error: supabaseError } = await query;
@@ -62,6 +70,13 @@ const ReferencesSection = () => {
 
     fetchData();
   }, [selectedCategory]);
+
+  // Initialiser avec la première catégorie
+  useEffect(() => {
+    if (categories.length > 0 && !selectedCategory) {
+      setSelectedCategory(categories[0].id);
+    }
+  }, [categories, selectedCategory]);
 
   const getStatusBadge = (status: string) => {
     switch (status?.toLowerCase()) {
@@ -113,12 +128,12 @@ const ReferencesSection = () => {
 
   const getCategoryIcon = (index: number) => {
     const icons = [
-      <FileText className="w-6 h-6" />,
-      <Award className="w-6 h-6" />,
-      <Building2 className="w-6 h-6" />,
-      <User className="w-6 h-6" />,
-      <Tag className="w-6 h-6" />,
-      <MapPin className="w-6 h-6" />
+      <FileText className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
+      <Award className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
+      <Building2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
+      <User className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
+      <Tag className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />,
+      <MapPin className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
     ];
     return icons[index % icons.length];
   };
@@ -204,31 +219,59 @@ const ReferencesSection = () => {
           <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-6 rounded-full"></div>
         </div>
 
-        {/* Category Filters */}
+        {/* Category Filters - Design mobile amélioré */}
         {categories.length > 0 && (
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            {categories.map((category, index) => (
-              <Toggle
-                key={category.id}
-                pressed={selectedCategory === category.id}
-                onPressedChange={() => handleCategoryChange(category.id)}
-                className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 ${
-                  selectedCategory === category.id
-                    ? `bg-gradient-to-r ${getCategoryColor(index)} text-white shadow-lg shadow-blue-500/25`
-                    : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
-                }`}
-              >
-                <div className={`p-1 rounded-lg ${selectedCategory === category.id ? 'bg-white/20' : 'bg-slate-100'}`}>
-                  {getCategoryIcon(index)}
-                </div>
-                <div className="text-left">
-                  <div className="font-bold">{category.name || category.titre}</div>
-                  <div className={`text-sm ${selectedCategory === category.id ? 'text-white/80' : 'text-slate-500'}`}>
-                    {category.description || 'Catégorie'}
+          <div className="mb-12">
+            {/* Version mobile - Slider horizontal */}
+            <div className="md:hidden">
+              <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+                {categories.map((category, index) => (
+                  <Toggle
+                    key={category.id}
+                    pressed={selectedCategory === category.id}
+                    onPressedChange={() => handleCategoryChange(category.id)}
+                    className={`flex-shrink-0 flex items-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 min-w-max ${
+                      selectedCategory === category.id
+                        ? `bg-gradient-to-r ${getCategoryColor(index)} text-white shadow-lg`
+                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
+                    }`}
+                  >
+                    <div className={`p-1 rounded-lg ${selectedCategory === category.id ? 'bg-white/20' : 'bg-slate-100'}`}>
+                      {getCategoryIcon(index)}
+                    </div>
+                    <div className="text-sm">
+                      <div className="font-semibold">{category.name || category.titre}</div>
+                    </div>
+                  </Toggle>
+                ))}
+              </div>
+            </div>
+
+            {/* Version desktop - Grid centré */}
+            <div className="hidden md:flex flex-wrap justify-center gap-4">
+              {categories.map((category, index) => (
+                <Toggle
+                  key={category.id}
+                  pressed={selectedCategory === category.id}
+                  onPressedChange={() => handleCategoryChange(category.id)}
+                  className={`flex items-center gap-3 px-6 py-4 rounded-2xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                    selectedCategory === category.id
+                      ? `bg-gradient-to-r ${getCategoryColor(index)} text-white shadow-lg shadow-blue-500/25`
+                      : 'bg-white text-slate-700 hover:bg-slate-50 border-2 border-slate-200'
+                  }`}
+                >
+                  <div className={`p-1 rounded-lg ${selectedCategory === category.id ? 'bg-white/20' : 'bg-slate-100'}`}>
+                    {getCategoryIcon(index)}
                   </div>
-                </div>
-              </Toggle>
-            ))}
+                  <div className="text-left">
+                    <div className="font-bold">{category.name || category.titre}</div>
+                    <div className={`text-sm ${selectedCategory === category.id ? 'text-white/80' : 'text-slate-500'}`}>
+                      {category.description || 'Catégorie'}
+                    </div>
+                  </div>
+                </Toggle>
+              ))}
+            </div>
           </div>
         )}
 
@@ -240,7 +283,7 @@ const ReferencesSection = () => {
             </div>
             <h3 className="text-2xl font-bold text-slate-900 mb-4">Aucune mission disponible</h3>
             <p className="text-slate-600 max-w-md mx-auto">
-              {selectedCategory ? 'Essayez de sélectionner une autre catégorie pour voir plus de projets.' : 'Revenez plus tard pour découvrir nos nouveaux projets.'}
+              Essayez de sélectionner une autre catégorie pour voir plus de projets.
             </p>
           </div>
         ) : (
@@ -249,10 +292,10 @@ const ReferencesSection = () => {
               {displayedMissions.map((mission, index) => (
                 <div
                   key={mission.id}
-                  onMouseEnter={() => setHoveredCard(mission.id.toString())}
+                  onMouseEnter={() => setHoveredCard(mission.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                   className={`group relative bg-white dark:bg-gray-800 rounded-3xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-slate-100 dark:border-gray-700 overflow-hidden ${
-                    hoveredCard === mission.id.toString() ? 'ring-2 ring-blue-500/20' : ''
+                    hoveredCard === mission.id ? 'ring-2 ring-blue-500/20' : ''
                   }`}
                 >
                   {/* Background Pattern */}
@@ -355,6 +398,17 @@ const ReferencesSection = () => {
           </div>
         )}
       </div>
+
+      {/* CSS pour masquer la scrollbar */}
+      <style>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };

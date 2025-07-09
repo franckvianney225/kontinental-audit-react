@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Send } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
 
 interface ContactProps {
   className?: string;
@@ -12,6 +13,9 @@ const Contact = ({ className = '' }: ContactProps) => {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
@@ -19,11 +23,56 @@ const Contact = ({ className = '' }: ContactProps) => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    alert('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', message: '' });
+    setIsSubmitting(true);
+
+    try {
+      // Enregistrer l'email dans Supabase d'abord
+      const { data: emailRecord, error: insertError } = await supabase
+        .from('emails')
+        .insert([{
+          sender_name: formData.name,
+          sender_email: formData.email,
+          recipient: import.meta.env.VITE_CONTACT_EMAIL,
+          subject: `Nouveau message de ${formData.name}`,
+          content: formData.message,
+          status: 'pending'
+        }])
+        .select()
+        .single();
+
+      if (insertError || !emailRecord) {
+        throw new Error("Erreur lors de l'enregistrement du message");
+      }
+
+      // Utiliser Supabase pour envoyer l'email
+      const { error: emailError } = await supabase.functions.invoke('send-email', {
+        body: {
+          email_id: emailRecord.id,
+          to: import.meta.env.VITE_CONTACT_EMAIL,
+          subject: `Nouveau message de ${formData.name}`,
+          html: `
+            <h2>Nouveau message de contact</h2>
+            <p><strong>Nom:</strong> ${formData.name}</p>
+            <p><strong>Email:</strong> ${formData.email}</p>
+            <p><strong>Message:</strong></p>
+            <p>${formData.message}</p>
+          `
+        }
+      });
+
+      if (emailError) throw new Error("Erreur lors de l'envoi du message");
+
+      setShowConfirmation(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setShowConfirmation(false), 5000);
+    } catch (error) {
+      alert(error.message || "Erreur lors de l'envoi du message");
+      console.error('Erreur Contact:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,12 +130,19 @@ const Contact = ({ className = '' }: ContactProps) => {
 
         <button
           type="submit"
-          className="w-full bg-[#D4AF37] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B8941F] transition-colors flex items-center justify-center space-x-2"
+          disabled={isSubmitting}
+          className="w-full bg-[#D4AF37] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#B8941F] transition-colors flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Send className="w-5 h-5" />
-          <span>Envoyer le message</span>
+          <span>{isSubmitting ? 'Envoi en cours...' : 'Envoyer le message'}</span>
         </button>
       </form>
+
+      {showConfirmation && (
+        <div className="mt-6 p-4 bg-green-100 text-green-800 rounded-lg text-center">
+          ✅ Merci pour votre message ! Nous vous contacterons bientôt.
+        </div>
+      )}
     </div>
   );
 };

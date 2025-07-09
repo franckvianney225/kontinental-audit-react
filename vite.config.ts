@@ -6,8 +6,15 @@ export default defineConfig({
   server: {
     host: "::",
     port: 8080,
-    allowedHosts: ['.ngrok-free.app'],  // autorise tout ngrok-free.app
+    allowedHosts: ['.ngrok-free.app'],
     cors: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
   },
   plugins: [react()],
   resolve: {
