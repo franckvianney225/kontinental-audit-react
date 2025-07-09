@@ -10,7 +10,7 @@ export default defineConfig({
     cors: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: 'https://ceillfyjxmsedxrosqux.supabase.co/functions/v1',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

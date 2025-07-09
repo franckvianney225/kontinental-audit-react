@@ -47,8 +47,19 @@ const Contact = ({ className = '' }: ContactProps) => {
       }
 
       // Utiliser Supabase pour envoyer l'email
-      const { error: emailError } = await supabase.functions.invoke('send-email', {
-        body: {
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) {
+        throw new Error("Session non authentifiée");
+      }
+
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
           email_id: emailRecord.id,
           to: import.meta.env.VITE_CONTACT_EMAIL,
           subject: `Nouveau message de ${formData.name}`,
@@ -59,16 +70,22 @@ const Contact = ({ className = '' }: ContactProps) => {
             <p><strong>Message:</strong></p>
             <p>${formData.message}</p>
           `
-        }
+        })
       });
 
-      if (emailError) throw new Error("Erreur lors de l'envoi du message");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Erreur lors de l'envoi du message");
+      }
 
       setShowConfirmation(true);
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => setShowConfirmation(false), 5000);
-    } catch (error) {
-      alert(error.message || "Erreur lors de l'envoi du message");
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Erreur lors de l'envoi du message";
+      alert(errorMessage);
       console.error('Erreur Contact:', error);
     } finally {
       setIsSubmitting(false);

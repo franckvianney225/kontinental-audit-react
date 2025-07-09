@@ -68,9 +68,9 @@ const Header = () => {
             <a href="/nos-atouts" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
               NOS ATOUTS
             </a>
-            <a href="#contact" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            {/* <a href="#contact" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
               CONTACT
-            </a>
+            </a> */}
           </nav>
 
           {/* CTA Button and Theme Toggle */}
@@ -126,9 +126,9 @@ const Header = () => {
               <a href="/nos-atouts" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Nos Atouts
               </a>
-              <a href="#contact" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+              {/* <a href="#contact" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Contact
-              </a>
+              </a> */}
               <div className="px-3 py-2">
                 <a href="/contact" className="w-full bg-[#D4AF37] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#B8941F] transition-colors">
                   Contacter-Nous
