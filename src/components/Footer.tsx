@@ -22,7 +22,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="text-sm hover:text-[#D4AF37] transition-colors"
               >
-                Abidjan Marcory, 25 BP 381 Abidjan 25
+                Abidjan Marcory, 25 BP 381 Abidjan 25 ,Avenue AMADOU Hampaté Ba
               </a>
             </div>
             <div className="flex items-center text-gray-300 mb-2">
@@ -31,7 +31,7 @@ const Footer = () => {
                 href="mailto:info@kontinental.ci"
                 className="text-sm hover:text-[#D4AF37] transition-colors"
               >
-                info@kontinental.ci
+                infos@kontinental.ci
               </a>
             </div>
             <div className="flex items-center text-gray-300">
@@ -40,7 +40,7 @@ const Footer = () => {
                 href="tel:+2252721758456"
                 className="text-sm hover:text-[#D4AF37] transition-colors"
               >
-                +225 27 21 75 84 56
+                +225 25 21 00 12 95
               </a>
             </div>
           </div>
@@ -50,23 +50,28 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Liens rapides</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
-                  Accueil
+                <a href="/" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                  ACCEUIL
                 </a>
               </li>
               <li>
-                <a href="#about" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
-                  À propos
+                <a href="/a-propos" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                  À PROPOS
                 </a>
               </li>
               <li>
                 <a href="#services" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
-                  Services
+                  SERVICES
                 </a>
               </li>
               <li>
-                <a href="#contact" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
-                  Contact
+                <a href="/nos-atouts" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                  NOS ATOUTS
+                </a>
+              </li>
+              <li>
+                <a href="/contact" className="text-gray-300 hover:text-[#D4AF37] transition-colors">
+                  CONTACT
                 </a>
               </li>
             </ul>
@@ -91,17 +96,17 @@ const Footer = () => {
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
               © 2024 KL KONTINENTAL. All rights reserved.
             </div>
-            <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
+            {/* <div className="flex space-x-6 text-sm">
+              <a href="/privacy" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
                 Politique de confidentialité
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
+              <a href="/terms" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
                 Conditions d'utilisation
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
+              <a href="/legal" className="text-gray-400 hover:text-[#D4AF37] transition-colors">
                 Mentions légales
               </a>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

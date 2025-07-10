@@ -27,7 +27,7 @@ const ContactPage = () => {
                   <Mail className="w-6 h-6 text-[#D4AF37] mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-[#0B1C39] dark:text-white mb-1">Email</h4>
-                    <p className="text-gray-600 dark:text-gray-300">info@kontinental.ci</p>
+                    <p className="text-gray-600 dark:text-gray-300">infos@kontinental.ci</p>
                   </div>
                 </div>
 
@@ -35,7 +35,7 @@ const ContactPage = () => {
                   <Phone className="w-6 h-6 text-[#D4AF37] mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-[#0B1C39] dark:text-white mb-1">Téléphone</h4>
-                    <p className="text-gray-600 dark:text-gray-300">+225 27 21 75 84 56</p>
+                    <p className="text-gray-600 dark:text-gray-300">+225 25 21 00 12 95</p>
                   </div>
                 </div>
 
@@ -46,6 +46,7 @@ const ContactPage = () => {
                     <p className="text-gray-600 dark:text-gray-300">
                       Abidjan Marcory<br />
                       25 BP 381 Abidjan 25<br />
+                      Avenue AMADOU Hampaté Ba<br />
                       Côte d'Ivoire
                     </p>
                   </div>

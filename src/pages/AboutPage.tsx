@@ -35,16 +35,16 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-          <Header />
-      <div className="h-16 bg-white dark:bg-gray-800 shadow-sm"></div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-950">
+      <Header />
+      <div className="h-16 bg-white dark:bg-gray-900 shadow-sm dark:shadow-gray-800/50"></div>
       
       {/* Hero Section */}
-      <section className="relative pt-20 pb-32 overflow-hidden">
+      <section className="relative pt-20 pb-32 overflow-hidden dark:bg-gray-900/50">
         {/* Background decorations */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 rounded-full blur-3xl"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 dark:from-blue-600/10 dark:to-purple-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-green-400/20 to-blue-400/20 dark:from-green-600/10 dark:to-blue-600/10 rounded-full blur-3xl"></div>
         </div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@ const AboutPage = () => {
             {items.map((item, index) => (
               <div 
                 key={index}
-                className={`group relative ${item.bgColor} backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl p-8 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-2 cursor-pointer`}
+                className={`group relative ${item.bgColor} backdrop-blur-sm border border-white/20 dark:border-gray-700 rounded-2xl p-8 hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-blue-500/5 transition-all duration-500 hover:-translate-y-2 cursor-pointer`}
               >
                 {/* Gradient overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -101,7 +101,7 @@ const AboutPage = () => {
 
           {/* Bottom CTA Section */}
           <div className="mt-20 text-center">
-            <div className="inline-flex items-center gap-6 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl p-8 hover:shadow-xl transition-all duration-300">
+            <div className="inline-flex items-center gap-6 bg-white/50 dark:bg-gray-800 backdrop-blur-sm border border-white/20 dark:border-gray-700 rounded-2xl p-8 hover:shadow-xl dark:hover:shadow-blue-500/5 transition-all duration-300">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
                   <Globe className="w-6 h-6 text-white" />

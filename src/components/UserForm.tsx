@@ -41,11 +41,11 @@ export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6">Nouvel utilisateur</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 dark:text-white">Nouvel utilisateur</h2>
         
         {error && (
-          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded">
             {error}
           </div>
         )}
@@ -57,7 +57,7 @@ export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
             />
           </div>
@@ -68,7 +68,7 @@ export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               required
               minLength={6}
             />
@@ -80,16 +80,16 @@ export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             />
           </div>
 
           <div>
-            <label className="block mb-2 font-medium">Rôle</label>
+            <label className="block mb-2 font-medium text-gray-700 dark:text-gray-300">Rôle</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
-              className="w-full p-2 border rounded"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="Utilisateur">Utilisateur</option>
               <option value="Administrateur">Administrateur</option>
@@ -100,14 +100,14 @@ export default function UserForm({ onSuccess, onCancel }: UserFormProps) {
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 border rounded"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               disabled={isLoading}
             >
               Annuler
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded transition-colors"
               disabled={isLoading}
             >
               {isLoading ? 'Création...' : 'Créer'}

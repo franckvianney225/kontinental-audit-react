@@ -21,12 +21,6 @@ const ReferencesSection = () => {
       try {
         console.log('Début du chargement des données...');
         
-        // Vérifier la session
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          throw new Error('Session non authentifiée');
-        }
-        
         // Récupérer les catégories
         const { data: categoriesData } = await supabase
           .from('category')

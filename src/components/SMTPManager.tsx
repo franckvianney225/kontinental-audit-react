@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { MailCheck, Mail, Server, Shield, CheckCircle, XCircle, AlertCircle, Eye, EyeOff } from 'lucide-react'
-import { supabase } from '../lib/supabaseClient'
 
 export const SMTPManager = () => {
   const [settings, setSettings] = useState({
@@ -16,19 +15,21 @@ export const SMTPManager = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
-  // Récupérer les paramètres SMTP depuis Supabase
+  // Simuler la récupération des paramètres SMTP
   useEffect(() => {
     const fetchSettings = async () => {
       setIsLoading(true)
       try {
-        const { data, error } = await supabase
-          .from('smtp_settings')
-          .select('*')
-          .single()
-
-        if (data) {
-          setSettings(data)
-        }
+        // Simulation d'un appel API
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Paramètres par défaut ou récupérés
+        setSettings({
+          host: 'smtp.gmail.com',
+          port: 587,
+          username: 'exemple@gmail.com',
+          password: '',
+          secure: true
+        })
       } catch (err) {
         console.error('Erreur SMTP:', err)
       } finally {
@@ -42,18 +43,14 @@ export const SMTPManager = () => {
   const handleSettingsChange = (field, value) => {
     setSettings(prev => ({...prev, [field]: value}))
     setHasChanges(true)
-    setTestResult(null) // Reset test result when settings change
+    setTestResult(null)
   }
 
   const handleSave = async () => {
     setIsLoading(true)
     try {
-      // Sauvegarder dans Supabase
-      const { error } = await supabase
-        .from('smtp_settings')
-        .upsert(settings)
-
-      if (error) throw error
+      // Simulation de sauvegarde
+      await new Promise(resolve => setTimeout(resolve, 1500))
       
       setHasChanges(false)
       setIsLoading(false)
@@ -89,7 +86,7 @@ export const SMTPManager = () => {
         })
       } else {
         setTestResult({
-          success: Math.random() > 0.3, // 70% de chance de succès pour la démo
+          success: Math.random() > 0.3,
           message: Math.random() > 0.3 
             ? 'Connexion établie avec succès!'
             : 'Échec de la connexion. Vérifiez vos paramètres.'
@@ -108,8 +105,8 @@ export const SMTPManager = () => {
   const isFormValid = settings.host && settings.username && settings.password
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 p-4">
+      <div className="w-full">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-3 mb-4">
@@ -117,30 +114,30 @@ export const SMTPManager = () => {
               <Mail className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Configuration SMTP</h1>
-              <p className="text-gray-600">Configurez et testez vos paramètres d'envoi d'emails</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Configuration SMTP</h1>
+              <p className="text-gray-600 dark:text-gray-400">Configurez et testez vos paramètres d'envoi d'emails</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Formulaire principal */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-              <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          {/* Formulaire principal - Prend plus d'espace */}
+          <div className="xl:col-span-3">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-100 dark:border-gray-700">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6 flex items-center">
                 <Server className="h-5 w-5 mr-2 text-blue-600" />
                 Paramètres du serveur
               </h2>
 
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Serveur SMTP *
                     </label>
                     <input
                       type="text"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                       value={settings.host}
                       onChange={(e) => handleSettingsChange('host', e.target.value)}
                       placeholder="smtp.gmail.com"
@@ -148,74 +145,78 @@ export const SMTPManager = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Port *
                     </label>
                     <input
                       type="number"
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                       value={settings.port}
                       onChange={(e) => handleSettingsChange('port', parseInt(e.target.value))}
                       placeholder="587"
                     />
                   </div>
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Nom d'utilisateur / Email *
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    value={settings.username}
-                    onChange={(e) => handleSettingsChange('username', e.target.value)}
-                    placeholder="votre-email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mot de passe *
-                  </label>
-                  <div className="relative">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Nom d'utilisateur / Email *
+                    </label>
                     <input
-                      type={showPassword ? "text" : "password"}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
-                      value={settings.password}
-                      onChange={(e) => handleSettingsChange('password', e.target.value)}
-                      placeholder="••••••••••••"
+                      type="email"
+                      className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                      value={settings.username}
+                      onChange={(e) => handleSettingsChange('username', e.target.value)}
+                      placeholder="votre-email@example.com"
                     />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center p-4 bg-gray-50 rounded-xl">
-                  <input
-                    type="checkbox"
-                    id="secure"
-                    className="h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
-                    checked={settings.secure}
-                    onChange={(e) => handleSettingsChange('secure', e.target.checked)}
-                  />
-                  <label htmlFor="secure" className="ml-3 text-sm text-gray-700 flex items-center">
-                    <Shield className="h-4 w-4 mr-1 text-green-600" />
-                    Connexion sécurisée (TLS/SSL)
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Mot de passe *
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                        value={settings.password}
+                        onChange={(e) => handleSettingsChange('password', e.target.value)}
+                        placeholder="••••••••••••"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-end">
+                    <div className="flex items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-xl w-full">
+                      <input
+                        type="checkbox"
+                        id="secure"
+                        className="h-5 w-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                        checked={settings.secure}
+                        onChange={(e) => handleSettingsChange('secure', e.target.checked)}
+                      />
+                      <label htmlFor="secure" className="ml-3 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                        <Shield className="h-4 w-4 mr-1 text-green-600" />
+                        Connexion sécurisée (TLS/SSL)
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Boutons d'action */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t">
+                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-600">
                   <button
                     onClick={testConnection}
                     disabled={isTesting || !isFormValid}
-                    className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors font-medium"
+                    className="flex-1 bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 disabled:bg-gray-400 text-white px-6 py-3 rounded-xl flex items-center justify-center space-x-2 transition-colors font-medium"
                   >
                     {isTesting ? (
                       <>
@@ -253,13 +254,13 @@ export const SMTPManager = () => {
           </div>
 
           {/* Panneau latéral */}
-          <div className="space-y-6">
+          <div className="xl:col-span-1 space-y-6">
             {/* Résultat du test */}
             {testResult && (
-              <div className={`p-6 rounded-2xl border-2 ${
+              <div className={`p-4 rounded-2xl border-2 ${
                 testResult.success 
-                  ? 'bg-green-50 border-green-200' 
-                  : 'bg-red-50 border-red-200'
+                  ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' 
+                  : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
               }`}>
                 <div className="flex items-center space-x-3 mb-2">
                   {testResult.success ? (
@@ -268,13 +269,13 @@ export const SMTPManager = () => {
                     <XCircle className="h-6 w-6 text-red-600" />
                   )}
                   <h3 className={`font-semibold ${
-                    testResult.success ? 'text-green-800' : 'text-red-800'
+                    testResult.success ? 'text-green-800 dark:text-green-200' : 'text-red-800 dark:text-red-200'
                   }`}>
                     {testResult.success ? 'Test réussi' : 'Test échoué'}
                   </h3>
                 </div>
                 <p className={`text-sm ${
-                  testResult.success ? 'text-green-700' : 'text-red-700'
+                  testResult.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'
                 }`}>
                   {testResult.message}
                 </p>
@@ -282,34 +283,34 @@ export const SMTPManager = () => {
             )}
 
             {/* Informations d'aide */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border border-gray-100 dark:border-gray-700">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
                 <AlertCircle className="h-5 w-5 mr-2 text-blue-600" />
                 Configurations courantes
               </h3>
-              <div className="space-y-4 text-sm">
-                <div className="p-3 bg-blue-50 rounded-lg">
-                  <strong className="text-blue-800">Gmail</strong>
-                  <p className="text-blue-700">smtp.gmail.com:587</p>
-                  <p className="text-xs text-blue-600 mt-1">Utilisez un mot de passe d'application</p>
+              <div className="space-y-3 text-sm">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <strong className="text-blue-800 dark:text-blue-200">Gmail</strong>
+                  <p className="text-blue-700 dark:text-blue-300">smtp.gmail.com:587</p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">Utilisez un mot de passe d'application</p>
                 </div>
-                <div className="p-3 bg-purple-50 rounded-lg">
-                  <strong className="text-purple-800">Outlook</strong>
-                  <p className="text-purple-700">smtp-mail.outlook.com:587</p>
+                <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                  <strong className="text-purple-800 dark:text-purple-200">Outlook</strong>
+                  <p className="text-purple-700 dark:text-purple-300">smtp-mail.outlook.com:587</p>
                 </div>
-                <div className="p-3 bg-yellow-50 rounded-lg">
-                  <strong className="text-yellow-800">Yahoo</strong>
-                  <p className="text-yellow-700">smtp.mail.yahoo.com:587</p>
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                  <strong className="text-yellow-800 dark:text-yellow-200">Yahoo</strong>
+                  <p className="text-yellow-700 dark:text-yellow-300">smtp.mail.yahoo.com:587</p>
                 </div>
               </div>
             </div>
 
             {/* Statut de la configuration */}
-            <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-4">Statut de la configuration</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 border border-gray-100 dark:border-gray-700">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Statut de la configuration</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Serveur SMTP</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Serveur SMTP</span>
                   {settings.host ? (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   ) : (
@@ -317,7 +318,7 @@ export const SMTPManager = () => {
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Authentification</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Authentification</span>
                   {settings.username && settings.password ? (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   ) : (
@@ -325,7 +326,7 @@ export const SMTPManager = () => {
                   )}
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Sécurité</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Sécurité</span>
                   {settings.secure ? (
                     <CheckCircle className="h-4 w-4 text-green-500" />
                   ) : (

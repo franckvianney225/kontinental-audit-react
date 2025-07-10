@@ -43,50 +43,48 @@ const Contact = ({ className = '' }: ContactProps) => {
         .single();
 
       if (insertError || !emailRecord) {
-        throw new Error("Erreur lors de l'enregistrement du message");
+        console.error("Erreur lors de l'enregistrement du message:", insertError);
       }
 
-      // Utiliser Supabase pour envoyer l'email
-      const { data: { session } } = await supabase.auth.getSession();
-      const accessToken = session?.access_token;
-      if (!accessToken) {
-        throw new Error("Session non authentifiée");
+      // Essayer d'envoyer l'email via l'API
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const accessToken = session?.access_token;
+        
+        if (accessToken) {
+          const response = await fetch('/api/contact', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`
+            },
+            body: JSON.stringify({
+              email_id: emailRecord?.id,
+              to: import.meta.env.VITE_CONTACT_EMAIL,
+              subject: `Nouveau message de ${formData.name}`,
+              html: `
+                <h2>Nouveau message de contact</h2>
+                <p><strong>Nom:</strong> ${formData.name}</p>
+                <p><strong>Email:</strong> ${formData.email}</p>
+                <p><strong>Message:</strong></p>
+                <p>${formData.message}</p>
+              `
+            })
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Erreur lors de l'envoi du message:", errorData);
+          }
+        }
+      } catch (apiError) {
+        console.error('Erreur API Contact:', apiError);
       }
 
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          email_id: emailRecord.id,
-          to: import.meta.env.VITE_CONTACT_EMAIL,
-          subject: `Nouveau message de ${formData.name}`,
-          html: `
-            <h2>Nouveau message de contact</h2>
-            <p><strong>Nom:</strong> ${formData.name}</p>
-            <p><strong>Email:</strong> ${formData.email}</p>
-            <p><strong>Message:</strong></p>
-            <p>${formData.message}</p>
-          `
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Erreur lors de l'envoi du message");
-      }
-
+      // Toujours afficher la confirmation et réinitialiser le formulaire
       setShowConfirmation(true);
       setFormData({ name: '', email: '', message: '' });
       setTimeout(() => setShowConfirmation(false), 5000);
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error
-        ? error.message
-        : "Erreur lors de l'envoi du message";
-      alert(errorMessage);
-      console.error('Erreur Contact:', error);
     } finally {
       setIsSubmitting(false);
     }

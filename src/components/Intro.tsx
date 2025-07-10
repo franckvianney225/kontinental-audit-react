@@ -88,11 +88,11 @@ const Intro = () => {
           ))}
         </div>
 
-        <div className="text-center mt-16">
+        {/* <div className="text-center mt-16">
           <button className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-700 dark:from-blue-400 dark:to-blue-600 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 hover:scale-[1.02] transition-all duration-300 shadow-md dark:shadow-blue-900/50 hover:shadow-lg">
             Demander un audit
           </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

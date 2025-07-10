@@ -31,7 +31,24 @@ import type { Mission } from '../types/mission'
 import { User, UserMetadata } from '../types/user'
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState('dashboard')
+  // Récupérer l'onglet actif depuis l'URL ou utiliser 'dashboard' par défaut
+  const [activeTab, setActiveTab] = useState(
+    window.location.hash.slice(1) || 'dashboard'
+  )
+  
+  // Mettre à jour l'URL quand l'onglet change
+  useEffect(() => {
+    window.location.hash = activeTab
+  }, [activeTab])
+
+  // Écouter les changements de hash manuels (navigation arrière/clics)
+  useEffect(() => {
+    const handleHashChange = () => {
+      setActiveTab(window.location.hash.slice(1) || 'dashboard')
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
   const [missions, setMissions] = useState<Mission[]>([])
   
   const [users, setUsers] = useState<User[]>([])

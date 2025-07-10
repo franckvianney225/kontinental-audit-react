@@ -40,32 +40,32 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <a href="/" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            <a href="/" className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
               ACCEUIL
             </a>
             <div className="relative group">
-              <button className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg flex items-center">
+              <button className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg flex items-center">
                 À PROPOS
                 <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute hidden group-hover:block bg-white shadow-lg rounded-md mt-1 py-1 w-48">
-                <a href="/a-propos" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] hover:bg-gray-50">
+              <div className="absolute hidden group-hover:block bg-white dark:bg-gray-800 shadow-lg rounded-md mt-1 py-1 w-48">
+                <a href="/a-propos" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] hover:bg-gray-50 dark:hover:bg-gray-700">
                   À propos
                 </a>
-                <a href="/equipe" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] hover:bg-gray-50">
+                <a href="/equipe" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] hover:bg-gray-50 dark:hover:bg-gray-700">
                   Notre équipe
                 </a>
               </div>
             </div>
-            <a href="#services" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            <a href="#services" className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
               SERVICES
             </a>
-            {/* <a href="#references" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            {/* <a href="#references" className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
               RÉFÉRENCES
             </a> */}
-            <a href="/nos-atouts" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+            <a href="/nos-atouts" className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
               NOS ATOUTS
             </a>
             {/* <a href="#contact" className="text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
@@ -111,24 +111,28 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="/" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+              <a href="/" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Accueil
               </a>
-              <a href="/a-propos" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
-                À propos
-              </a>
-              <a href="/equipe" className="block px-6 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-sm">
-                - Notre équipe
-              </a>
-              <a href="#services" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+              <div className="group">
+                <button className="w-full text-left px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
+                  À propos
+                </button>
+                <div className="pl-4">
+                  <a href="/a-propos" className="block px-3 py-1 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-base">
+                    À propos
+                  </a>
+                  <a href="/equipe" className="block px-3 py-1 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-base">
+                    Notre équipe
+                  </a>
+                </div>
+              </div>
+              <a href="#services" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Services
               </a>
-              <a href="/nos-atouts" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
+              <a href="/nos-atouts" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
                 Nos Atouts
               </a>
-              {/* <a href="#contact" className="block px-3 py-2 text-[#0B1C39] hover:text-[#D4AF37] transition-colors font-medium text-lg">
-                Contact
-              </a> */}
               <div className="px-3 py-2">
                 <a href="/contact" className="w-full bg-[#D4AF37] text-white px-6 py-2 rounded-lg font-medium hover:bg-[#B8941F] transition-colors">
                   Contacter-Nous
