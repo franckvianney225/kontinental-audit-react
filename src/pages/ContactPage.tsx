@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import ContactForm from '../components/Contact';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { supabase } from '../lib/supabaseClient';
+import { Enterprise } from '../types/enterprise';
 
 const ContactPage = () => {
+  const [enterprise, setEnterprise] = useState<Enterprise | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEnterprise = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('enterprise')
+          .select('*')
+          .maybeSingle();
+
+        if (error) throw error;
+        setEnterprise(data);
+      } catch (error) {
+        console.error('Error fetching enterprise data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEnterprise();
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-gray-50 dark:bg-gray-900"></div>;
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <Header />
@@ -27,7 +54,12 @@ const ContactPage = () => {
                   <Mail className="w-6 h-6 text-[#D4AF37] mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-[#0B1C39] dark:text-white mb-1">Email</h4>
-                    <p className="text-gray-600 dark:text-gray-300">infos@kontinental.ci</p>
+                    <a
+                      href={`mailto:${enterprise?.email || 'infos@kontinental.ci'}`}
+                      className="text-gray-600 dark:text-gray-300 hover:text-[#D4AF37] transition-colors"
+                    >
+                      {enterprise?.email || 'infos@kontinental.ci'}
+                    </a>
                   </div>
                 </div>
 
@@ -35,7 +67,12 @@ const ContactPage = () => {
                   <Phone className="w-6 h-6 text-[#D4AF37] mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-[#0B1C39] dark:text-white mb-1">Téléphone</h4>
-                    <p className="text-gray-600 dark:text-gray-300">+225 25 21 00 12 95</p>
+                    <a
+                      href={`tel:${enterprise?.numero_telephone || '+2252521001295'}`}
+                      className="text-gray-600 dark:text-gray-300 hover:text-[#D4AF37] transition-colors"
+                    >
+                      {enterprise?.numero_telephone || '+225 25 21 00 12 95'}
+                    </a>
                   </div>
                 </div>
 
@@ -43,12 +80,21 @@ const ContactPage = () => {
                   <MapPin className="w-6 h-6 text-[#D4AF37] mt-1 flex-shrink-0" />
                   <div>
                     <h4 className="font-semibold text-[#0B1C39] dark:text-white mb-1">Adresse</h4>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Abidjan Marcory<br />
-                      25 BP 381 Abidjan 25<br />
-                      Avenue AMADOU Hampaté Ba<br />
-                      Côte d'Ivoire
-                    </p>
+                    <a
+                      href={`https://www.google.com/maps/place/${encodeURIComponent(enterprise?.lieu || 'Abidjan Marcory 25 BP 381 Abidjan 25 Avenue AMADOU Hampaté Ba Côte d\'Ivoire')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-600 dark:text-gray-300 hover:text-[#D4AF37] transition-colors"
+                    >
+                      {enterprise?.lieu || (
+                        <>
+                          Abidjan Marcory<br />
+                          25 BP 381 Abidjan 25<br />
+                          Avenue AMADOU Hampaté Ba<br />
+                          Côte d'Ivoire
+                        </>
+                      )}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -76,31 +122,31 @@ const ContactPage = () => {
       </div>
       
       {/* Stats Section */}
-      <div className="bg-white py-16">
+      <div className="bg-white dark:bg-gray-900 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             <div className="p-6">
               <div className="text-4xl font-bold text-[#D4AF37] mb-2">15+</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Années d'expérience</h3>
-              <p className="text-gray-600">Expertise accumulée depuis 2008</p>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Années d'expérience</h3>
+              <p className="text-gray-600 dark:text-gray-400">Expertise accumulée depuis 2008</p>
             </div>
             
             <div className="p-6">
               <div className="text-4xl font-bold text-[#D4AF37] mb-2">200+</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Clients satisfaits</h3>
-              <p className="text-gray-600">Entreprises de tous secteurs</p>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Clients satisfaits</h3>
+              <p className="text-gray-600 dark:text-gray-400">Entreprises de tous secteurs</p>
             </div>
             
             <div className="p-6">
               <div className="text-4xl font-bold text-[#D4AF37] mb-2">500+</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Missions réalisées</h3>
-              <p className="text-gray-600">Audits et consultations</p>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Missions réalisées</h3>
+              <p className="text-gray-600 dark:text-gray-400">Audits et consultations</p>
             </div>
             
             <div className="p-6">
               <div className="text-4xl font-bold text-[#D4AF37] mb-2">1000+</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Heures de formation</h3>
-              <p className="text-gray-600">Professionnels formés</p>
+              <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Heures de formation</h3>
+              <p className="text-gray-600 dark:text-gray-400">Professionnels formés</p>
             </div>
           </div>
         </div>

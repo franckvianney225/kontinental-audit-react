@@ -3,6 +3,7 @@ import { supabase, supabaseAdmin } from '../lib/supabaseClient'
 import MissionForm from '../components/MissionForm'
 import UserForm from '../components/UserForm'
 import { SMTPManager } from '../components/SMTPManager'
+import EnterpriseManager from '../components/admin/EnterpriseManager'
 import { Dashboard } from '../components/admin/Dashboard'
 import MissionsManager from '../components/admin/MissionsManager'
 import { UsersManager } from '../components/admin/UsersManager'
@@ -23,7 +24,8 @@ import {
   Phone,
   Building,
   MailCheck,
-  Server
+  Server,
+  Briefcase
 } from 'lucide-react'
 
 import type { Mission } from '../types/mission'
@@ -275,6 +277,7 @@ export default function AdminPage() {
               }}
             />
           )}
+          {activeTab === 'enterprises' && <EnterpriseManager />}
           {activeTab === 'smtp' && <SMTPManager />}
         </div>
       </div>

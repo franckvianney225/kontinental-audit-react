@@ -1,6 +1,25 @@
 import { MapPin, Mail, Phone } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { Enterprise } from '@/types/enterprise';
 
 const Footer = () => {
+  const [enterprise, setEnterprise] = useState<Enterprise | null>(null);
+
+  useEffect(() => {
+    const fetchEnterprise = async () => {
+      const { data, error } = await supabase
+        .from('enterprise')
+        .select('*')
+        .single();
+
+      if (!error && data) {
+        setEnterprise(data);
+      }
+    };
+
+    fetchEnterprise();
+  }, []);
   return (
     <footer className="bg-[#0B1C39] text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,35 +33,39 @@ const Footer = () => {
             <p className="text-gray-300 mb-6 max-w-md">
               Votre partenaire de confiance pour les services d'audit, de fiscalité et de formation. Nous aidons les entreprises à atteindre l'excellence grâce à des solutions de conseil complètes.
             </p>
-            <div className="flex items-center text-gray-300 mb-2">
-              <MapPin className="w-4 h-4 mr-2 text-[#D4AF37]" />
-              <a
-                href="https://www.google.com/maps/place/Abidjan+Marcory,+25+BP+381+Abidjan+25"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm hover:text-[#D4AF37] transition-colors"
-              >
-                Abidjan Marcory, 25 BP 381 Abidjan 25 ,Avenue AMADOU Hampaté Ba
-              </a>
-            </div>
-            <div className="flex items-center text-gray-300 mb-2">
-              <Mail className="w-4 h-4 mr-2 text-[#D4AF37]" />
-              <a
-                href="mailto:info@kontinental.ci"
-                className="text-sm hover:text-[#D4AF37] transition-colors"
-              >
-                infos@kontinental.ci
-              </a>
-            </div>
-            <div className="flex items-center text-gray-300">
-              <Phone className="w-4 h-4 mr-2 text-[#D4AF37]" />
-              <a
-                href="tel:+2252721758456"
-                className="text-sm hover:text-[#D4AF37] transition-colors"
-              >
-                +225 25 21 00 12 95
-              </a>
-            </div>
+            {enterprise && (
+              <>
+                <div className="flex items-center text-gray-300 mb-2">
+                  <MapPin className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                  <a
+                    href={`https://www.google.com/maps/place/${encodeURIComponent(enterprise.lieu)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm hover:text-[#D4AF37] transition-colors"
+                  >
+                    {enterprise.lieu}
+                  </a>
+                </div>
+                <div className="flex items-center text-gray-300 mb-2">
+                  <Mail className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                  <a
+                    href={`mailto:${enterprise.email}`}
+                    className="text-sm hover:text-[#D4AF37] transition-colors"
+                  >
+                    {enterprise.email}
+                  </a>
+                </div>
+                <div className="flex items-center text-gray-300">
+                  <Phone className="w-4 h-4 mr-2 text-[#D4AF37]" />
+                  <a
+                    href={`tel:${enterprise.numero_telephone}`}
+                    className="text-sm hover:text-[#D4AF37] transition-colors"
+                  >
+                    {enterprise.numero_telephone}
+                  </a>
+                </div>
+              </>
+            )}
           </div>
 
           {/* Quick Links */}
