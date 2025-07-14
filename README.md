@@ -1,73 +1,74 @@
-# Welcome to your KL project
+# Kontinental Audit - Application de Gestion
 
-## Project info
+Application web complète pour la gestion des missions d'audit et de conseil.
 
-**URL**: https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925
+## Fonctionnalités Principales
 
-## How can I edit this code?
+- Interface administrateur complète
+- Gestion des missions et catégories
+- Galerie de références
+- Présentation de l'équipe
+- Système de contact
+- Thème clair/sombre
+- Internationalisation (français/anglais)
 
-There are several ways of editing your application.
+## Technologies Utilisées
 
-**Use KL**
+- **Framework**: React avec TypeScript
+- **Build**: Vite
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Base de données**: Supabase
+- **Hébergement**: Netlify
 
-Simply visit the [KL Project](https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and start prompting.
+## Captures d'Écran
 
-Changes made via KL will be committed automatically to this repo.
+![Page d'accueil](public/readme/Capture%20d%E2%80%99%C3%A9cran%20du%202025-07-14%2016-37-29.png)
+![Interface Admin](public/readme/Capture%20d%E2%80%99%C3%A9cran%20du%202025-07-14%2016-37-36.png)
+![Gestion des Missions](public/readme/Capture%20d%E2%80%99%C3%A9cran%20du%202025-07-14%2016-38-02.png)
 
-**Use your preferred IDE**
+## Installation Locale
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in KL.
+1. Cloner le dépôt :
+```bash
+git clone https://github.com/votre-repo/kontinental-audit-react.git
+cd kontinental-audit-react
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Installer les dépendances :
+```bash
+npm install
+```
 
-Follow these steps:
+3. Configurer les variables d'environnement :
+Créer un fichier `.env` basé sur `.env.example` et remplir les valeurs nécessaires.
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Démarrer l'application :
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Déploiement
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Le projet est configuré pour un déploiement facile sur Netlify :
 
-**Use GitHub Codespaces**
+1. Connecter votre compte Netlify au dépôt GitHub
+2. Les paramètres de build sont préconfigurés dans `netlify.toml`
+3. Les variables d'environnement doivent être configurées dans les paramètres Netlify
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Structure du Projet
 
-## What technologies are used for this project?
+```
+src/
+├── components/       # Composants réutilisables
+├── pages/            # Pages de l'application  
+├── context/          # Contextes React
+├── hooks/            # Hooks personnalisés
+├── lib/              # Utilitaires et clients
+├── types/            # Définitions TypeScript
+├── locales/          # Fichiers de traduction
+public/               # Assets statiques
+```
 
-This project is built with:
+## Contribution
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [KL](https://KL.dev/projects/88864fb9-876d-4571-a26b-77c4467bb925) and click on Share -> Publish.
-
-## Can I connect a custom domain to my KL project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.KL.dev/tips-tricks/custom-domain#step-by-step-guide)
+Les contributions sont les bienvenues. Merci de créer une issue pour discuter des changements proposés avant de soumettre une pull request.
