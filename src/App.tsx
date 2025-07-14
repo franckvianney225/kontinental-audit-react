@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { useEffect, useState } from 'react';
+import { ThemeProvider } from "./context/ThemeContext";
 import { supabase } from './lib/supabaseClient';
 import type { Session } from '@supabase/supabase-js';
 import { BackToTop } from "@/components/BackToTop";
@@ -26,7 +27,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <LanguageProvider>
+      <ThemeProvider>
+        <LanguageProvider>
         <BrowserRouter>
           <ThemeToggle className="hidden md:block" />
           <Routes>
@@ -45,7 +47,8 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </LanguageProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </TooltipProvider>
     <BackToTop />
   </QueryClientProvider>

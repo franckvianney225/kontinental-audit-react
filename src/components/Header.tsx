@@ -43,19 +43,36 @@ const Header = () => {
             <a href="/" className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg">
               ACCEUIL
             </a>
-            <div className="relative group">
-              <button className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg flex items-center">
+            <div className="relative">
+              <button
+                className="text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] transition-colors font-medium text-lg flex items-center"
+                onClick={() => {
+                  const menu = document.getElementById('about-menu');
+                  menu?.classList.toggle('hidden');
+                }}
+                onMouseEnter={() => {
+                  const menu = document.getElementById('about-menu');
+                  menu?.classList.remove('hidden');
+                }}
+              >
                 À PROPOS
                 <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               </button>
-              <div className="absolute hidden group-hover:block bg-white dark:bg-gray-800 shadow-lg rounded-md mt-1 py-1 w-48">
-                <a href="/a-propos" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] hover:bg-gray-50 dark:hover:bg-gray-700">
-                  À propos
-                </a>
+              <div
+                id="about-menu"
+                className="absolute hidden bg-white dark:bg-gray-800 shadow-lg rounded-md mt-1 py-1 w-48"
+                onMouseLeave={() => {
+                  const menu = document.getElementById('about-menu');
+                  menu?.classList.add('hidden');
+                }}
+              >
                 <a href="/equipe" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] hover:bg-gray-50 dark:hover:bg-gray-700">
                   Notre équipe
+                </a>
+                <a href="/a-propos" className="block px-4 py-2 text-[#0B1C39] hover:text-[#D4AF37] dark:text-white dark:hover:text-[#D4AF37] hover:bg-gray-50 dark:hover:bg-gray-700">
+                  Qui sommes-nous ?
                 </a>
               </div>
             </div>

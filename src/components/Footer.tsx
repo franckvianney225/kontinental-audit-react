@@ -28,7 +28,7 @@ const Footer = () => {
           {/* Company Info */}
           <div>
             <div className="text-3xl font-bold text-[#D4AF37] mb-4">
-              KL KONTINENTAL
+              KONTINENTAL
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
               Votre partenaire de confiance pour les services d'audit, de fiscalité et de formation. Nous aidons les entreprises à atteindre l'excellence grâce à des solutions de conseil complètes.
@@ -117,7 +117,7 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 KL KONTINENTAL. All rights reserved.
+              © 2025 Site édité par SELECT-SI
             </div>
             {/* <div className="flex space-x-6 text-sm">
               <a href="/privacy" className="text-gray-400 hover:text-[#D4AF37] transition-colors">

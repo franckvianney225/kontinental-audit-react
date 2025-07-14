@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Award, MapPin, TrendingUp, Users, Target, Clock, CheckCircle, ArrowRight, Phone, Mail } from 'lucide-react';
+import { supabase } from '@/lib/supabaseClient';
+import { Enterprise } from '@/types/enterprise';
 
 const About = () => {
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
   const [animatedStats, setAnimatedStats] = useState([]);
+  const [enterprise, setEnterprise] = useState<Enterprise | null>(null);
 
   useEffect(() => {
     setIsVisible(true);
@@ -14,6 +17,21 @@ const About = () => {
     const timer = setTimeout(() => {
       setAnimatedStats([15, 200, 500, 1000]);
     }, 500);
+    
+    // Récupération des données de l'entreprise
+    const fetchEnterprise = async () => {
+      const { data, error } = await supabase
+        .from('enterprise')
+        .select('*')
+        .single();
+
+      if (!error && data) {
+        setEnterprise(data);
+      }
+    };
+
+    fetchEnterprise();
+    
     return () => clearTimeout(timer);
   }, []);
 
@@ -139,18 +157,57 @@ const About = () => {
               <div className="bg-slate-50 dark:bg-gray-700 p-6 rounded-2xl border border-slate-200 dark:border-gray-600">
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">Nous Contacter</h3>
                 <div className="space-y-3">
-                  <div className="flex items-center text-slate-600 dark:text-gray-300">
-                    <MapPin className="w-5 h-5 mr-3 text-blue-600" />
-                    <span>ABIDJAN MARCORY, Avenue TSF, en face de l'Église Sainte Thérèse</span>
-                  </div>
-                  <div className="flex items-center text-slate-600 dark:text-gray-300">
-                    <Phone className="w-5 h-5 mr-3 text-green-600" />
-                    <span>+225 XX XX XX XX XX</span>
-                  </div>
-                  <div className="flex items-center text-slate-600 dark:text-gray-300">
-                    <Mail className="w-5 h-5 mr-3 text-purple-600" />
-                    <span>contact@kontinental.ci</span>
-                  </div>
+                  {enterprise && (
+                    <>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <MapPin className="w-5 h-5 mr-3 text-blue-600" />
+                        <a
+                          href={`https://www.google.com/maps/place/${encodeURIComponent(enterprise.lieu)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        >
+                          {enterprise.lieu}
+                        </a>
+                      </div>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <Phone className="w-5 h-5 mr-3 text-green-600" />
+                        <a
+                          href={`tel:${enterprise.numero_telephone}`}
+                          className="hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        >
+                          {enterprise.numero_telephone}
+                        </a>
+                      </div>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <Mail className="w-5 h-5 mr-3 text-purple-600" />
+                        <a
+                          href={`mailto:${enterprise.email}`}
+                          className="hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                        >
+                          {enterprise.email}
+                        </a>
+                      </div>
+                    </>
+                  )}
+                  
+                  {/* Fallback si les données ne sont pas encore chargées */}
+                  {!enterprise && (
+                    <>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <MapPin className="w-5 h-5 mr-3 text-blue-600" />
+                        <span>Chargement...</span>
+                      </div>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <Phone className="w-5 h-5 mr-3 text-green-600" />
+                        <span>Chargement...</span>
+                      </div>
+                      <div className="flex items-center text-slate-600 dark:text-gray-300">
+                        <Mail className="w-5 h-5 mr-3 text-purple-600" />
+                        <span>Chargement...</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

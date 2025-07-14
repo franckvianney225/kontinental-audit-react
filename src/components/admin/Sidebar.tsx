@@ -1,4 +1,4 @@
-import { BarChart3, Calendar, Users, Server, Briefcase } from 'lucide-react'
+import { BarChart3, Calendar, Users, Server, Briefcase, Tag } from 'lucide-react'
 
 interface SidebarProps {
   activeTab: string
@@ -37,10 +37,22 @@ export function Sidebar({ activeTab, setActiveTab, onLogout }: SidebarProps) {
             <span className="font-medium">Missions</span>
           </button>
           
-          <button 
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+              activeTab === 'categories'
+                ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600 dark:border-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
+          >
+            <Tag className="h-5 w-5" />
+            <span className="font-medium">Catégories</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('users')}
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-              activeTab === 'users' 
+              activeTab === 'users'
                 ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600 dark:border-blue-400'
                 : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
             }`}

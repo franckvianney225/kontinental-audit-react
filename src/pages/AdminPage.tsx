@@ -8,6 +8,7 @@ import { Dashboard } from '../components/admin/Dashboard'
 import MissionsManager from '../components/admin/MissionsManager'
 import { UsersManager } from '../components/admin/UsersManager'
 import { Sidebar } from '../components/admin/Sidebar'
+import { CategoriesManager } from '../components/admin/CategoriesManager'
 import {
   Users,
   Calendar,
@@ -279,6 +280,7 @@ export default function AdminPage() {
           )}
           {activeTab === 'enterprises' && <EnterpriseManager />}
           {activeTab === 'smtp' && <SMTPManager />}
+          {activeTab === 'categories' && <CategoriesManager />}
         </div>
       </div>
     </div>
